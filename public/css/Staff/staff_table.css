@@ -1,0 +1,26 @@
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border-bottom: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+
+.table-content tr:hover {
+    background-color: #eeeeee;
+}
+
+i {
+  
+    cursor: pointer;
+    margin-right: 0.3rem;
+}

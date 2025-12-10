@@ -1,0 +1,25 @@
+.content{
+    padding: 0.4rem;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+    justify-items: center;
+}
+
+.title-section h2 {
+    padding-top: 0.5rem;
+     font-size: 28px;
+    text-align: center;
+}
+
+.toggle-eye {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: gray;
+}

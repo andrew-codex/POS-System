@@ -1,0 +1,134 @@
+.sale-content{
+    padding: 0.4rem;
+   
+}
+
+.sales-header{
+    line-height: 0%;
+}
+
+.filter-section {
+    width: 100%;
+    margin: 1.8rem 0 1rem 0;
+}
+
+.filter-form {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;  /* Responsive fallback */
+}
+
+.input-field {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #c9c9c9;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 0.95rem;
+    transition: 0.2s ease;
+}
+
+.input-field:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary {
+    padding: 0.45rem 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #0068da;
+}
+
+.btn-secondary {
+    padding: 0.45rem 1rem;
+    background: #6c757d;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    border: 1px solid #ddd;
+    
+}
+
+th,
+td {
+    border-bottom: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+    font-weight: 500;
+}
+
+.sales-table tr:hover {
+    background-color: #eeeeee;
+}
+
+
+.badge-status span {
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge-completed {
+    background-color: #28a745;
+}
+.badge-pending {
+    background-color: #ffc107;
+}
+.badge-canceled {
+    background-color: #dc3545;
+}
+
+.badge-refunded {
+    background-color: #17a2b8;
+}
+
+.badge-partially-refunded {
+    background-color: #ff8800;
+}
+
+.badge-exchanged {
+    background-color: #6f42c1;
+}
+
+.pagination-links {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.result-links {
+    margin: 0;
+    color: #888888;
+    font-size: 0.9rem;
+}
+
+.result-links.no-sales {
+    color: #888888;
+    font-size: 1rem;
+    margin-left: 430px;
+}
