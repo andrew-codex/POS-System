@@ -43,7 +43,7 @@ class StockController extends Controller
     public function create(Request $request)
     {
         $productId = $request->product_id;
-        $products = Products::all();
+        $products = Products::select('id', 'product_name')->get();
 
         $selectedProduct = null;
         if ($productId) {
@@ -60,30 +60,32 @@ class StockController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        Stocks::updateOrCreate([
-            'product_id' => $request->product_id,
-        ], [
-            'quantity' => DB::raw('quantity + ' . $request->quantity)
-        ]);
+        DB::transaction(function () use ($request) {
+            $stock = Stocks::where('product_id', $request->product_id)
+                ->lockForUpdate()
+                ->first();
 
-        StockLog::create([
-        'product_id' => $request->product_id,
-        'type'       => 'in',
-        'quantity'   => $request->quantity,
-        'remarks'    => 'Stock added via form',
-        'user_id'    => auth()->id()
-    ]);
+            if ($stock) {
+                $stock->quantity = $stock->quantity + $request->quantity;
+                $stock->save();
+            } else {
+                $stock = Stocks::create([
+                    'product_id' => $request->product_id,
+                    'quantity'   => $request->quantity,
+                ]);
+            }
 
+            StockLog::create([
+                'product_id' => $request->product_id,
+                'type'       => 'in',
+                'quantity'   => $request->quantity,
+                'remarks'    => 'Stock added via form',
+                'user_id'    => auth()->id(),
+            ]);
+        });
         return redirect()->route('inventory.stock')->with('success', 'Stock created successfully.');
     }
 
- 
-    public function show(string $id)
-    {
-        //
-    }
-
-    
     public function edit($id)
     {
         $stock = Stocks::with('product')->findOrFail($id);
@@ -97,32 +99,27 @@ class StockController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
-        $stock = Stocks::findOrFail($id);
-        
+        DB::transaction(function () use ($request, $id) {
+            $stock = Stocks::findOrFail($id);
             $oldQty = $stock->quantity;
             $newQty = $request->quantity;
 
-        Stocks::where('id', $id)->update([
-            'quantity' => $newQty
-        ]);
+            $stock->update([
+                'quantity' => $newQty
+            ]);
 
-          $difference = $newQty - $oldQty;
-          $type = $difference >= 0 ? 'adjustment' : 'adjustment';
+            $difference = $newQty - $oldQty;
+            $type = 'adjustment';
 
-         StockLog::create([
-            'product_id' => $stock->product_id,
-            'type'       => $type,
-            'quantity' => abs($difference),
-            'remarks'    => 'Stock adjusted via edit form',
-            'user_id'    => auth()->id()
-        ]);
+            StockLog::create([
+                'product_id' => $stock->product_id,
+                'type'       => $type,
+                'quantity' => abs($difference),
+                'remarks'    => 'Stock adjusted via edit form',
+                'user_id'    => auth()->id()
+            ]);
+        });
 
         return redirect()->route('inventory.stock')->with('success', 'Stock updated successfully.');
-    }
-
- 
-    public function destroy(string $id)
-    {
-        //
     }
 }
