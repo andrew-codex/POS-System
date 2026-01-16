@@ -1,10 +1,11 @@
 <?php
-
 namespace App\Http\Controllers\POS;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 use App\Models\Sales;
 use App\Models\SaleItem;
 use Illuminate\Support\Facades\DB;
@@ -15,47 +16,33 @@ class ReportsController extends Controller
   
     public function index(Request $request)
     {
+        $this->validateDateInputs($request);
 
-        $from = $request->from;
-        $to = $request->to;
+        $from = $request->input('from');
+        $to = $request->input('to');
         $perPage = 10;
         $page = $request->get('page', 1);
 
        
-        $salesByDateCollection = Cache::remember("sales_by_date_{$from}_{$to}", 60, function() use ($from, $to) {
+        $salesByDateCacheKey = 'sales_by_date_' . ($from ?: 'all') . '_' . ($to ?: 'all');
+        $salesByDateCollection = $this->rememberReports($salesByDateCacheKey, 60, function() use ($from, $to) {
             return Sales::getSalesByDateQuery($from, $to)->get()->toArray();
         });
-        $salesByDate = new LengthAwarePaginator(
-            collect($salesByDateCollection)->forPage($page, $perPage),
-            count($salesByDateCollection),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+        $salesByDate = $this->paginateCollection($salesByDateCollection, $page, $perPage);
 
        
-        $salesByProductCollection = Cache::remember("sales_by_product", 60, function() {
+        $salesByProductCacheKey = 'sales_by_product_' . ($from ?: 'all') . '_' . ($to ?: 'all');
+        $salesByProductCollection = $this->rememberReports($salesByProductCacheKey, 60, function() {
             return SaleItem::getSalesByProductQuery()->get()->toArray();
         });
-        $salesByProduct = new LengthAwarePaginator(
-            collect($salesByProductCollection)->forPage($page, $perPage),
-            count($salesByProductCollection),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+        $salesByProduct = $this->paginateCollection($salesByProductCollection, $page, $perPage);
 
         
-        $invoiceDetailsCollection = Cache::remember("invoice_details_{$from}_{$to}", 60, function() use ($from, $to) {
+        $invoiceDetailsCacheKey = 'invoice_details_' . ($from ?: 'all') . '_' . ($to ?: 'all');
+        $invoiceDetailsCollection = $this->rememberReports($invoiceDetailsCacheKey, 60, function() use ($from, $to) {
             return Sales::getInvoiceDetailsQuery($from, $to)->get()->toArray();
         });
-        $invoiceDetails = new LengthAwarePaginator(
-            collect($invoiceDetailsCollection)->forPage($page, $perPage),
-            count($invoiceDetailsCollection),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
+        $invoiceDetails = $this->paginateCollection($invoiceDetailsCollection, $page, $perPage);
 
         return view('POS.Reports.reports', compact('salesByDate','salesByProduct','invoiceDetails'));
     
@@ -64,8 +51,9 @@ class ReportsController extends Controller
 
      public function exportSalesByDatePDF(Request $request)
     {
-        $from = $request->from;
-        $to = $request->to;
+        $this->validateDateInputs($request);
+        $from = $request->input('from');
+        $to = $request->input('to');
 
         $salesByDate = Sales::getSalesByDateQuery($from, $to)->get();
 
@@ -85,8 +73,9 @@ class ReportsController extends Controller
 
     public function exportInvoiceDetailsPDF(Request $request)
     {
-        $from = $request->from;
-        $to = $request->to;
+        $this->validateDateInputs($request);
+        $from = $request->input('from');
+        $to = $request->input('to');
 
         $invoiceDetails = Sales::getInvoiceDetailsQuery($from, $to)->get();
 
@@ -97,4 +86,51 @@ class ReportsController extends Controller
 
 
    
+
+    private function validateDateInputs(Request $request)
+    {
+        $validator = Validator::make($request->only(['from', 'to']), [
+            'from' => 'nullable|date|date_format:Y-m-d',
+            'to' => 'nullable|date|date_format:Y-m-d',
+        ]);
+
+        $validator->after(function ($v) use ($request) {
+            $from = $request->input('from');
+            $to = $request->input('to');
+            if (!empty($from) && !empty($to)) {
+                try {
+                    $fromDt = Carbon::createFromFormat('Y-m-d', $from);
+                    $toDt = Carbon::createFromFormat('Y-m-d', $to);
+                    if ($fromDt->gt($toDt)) {
+                        $v->errors()->add('to', 'The to date must be after or equal to the from date.');
+                    }
+                } catch (\Exception $e) {
+                }
+            }
+        });
+
+        $validator->validate();
+    }
+
+    private function rememberReports(string $key, int $ttl, callable $callback)
+    {
+        $store = Cache::getStore();
+        if (method_exists($store, 'tags')) {
+            return Cache::tags(['reports'])->remember($key, $ttl, $callback);
+        }
+
+        return Cache::remember($key, $ttl, $callback);
+    }
+
+    private function paginateCollection($collection, int $page, int $perPage)
+    {
+        $col = collect($collection);
+        return new LengthAwarePaginator(
+            $col->forPage($page, $perPage)->values(),
+            $col->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+    }
 }
