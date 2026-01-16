@@ -22,7 +22,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 Route::redirect('/', '/auth/login');
 Route::get('/auth/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'login'])->name('auth.login.submit');
-Route::get('/auth/logout', [LoginController::class, 'logout'])->name('auth.logout');
+
 
 
 
@@ -116,4 +116,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/inventory/stocks/{id}', [StockController::class, 'update'])
         ->middleware(PermissionMiddleware::class . ':view_stock')
         ->name('stock.update');
+
+    Route::post('/auth/logout', [LoginController::class, 'logout'])->name('auth.logout');
 });

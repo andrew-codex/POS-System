@@ -1,13 +1,11 @@
-@php
-    $user = auth()->user();
-@endphp
-
 <div id="sidebar">
     <div class="sidebar-brand">
-        <div class="logo "><h3>
-            <img src="{{ isset($settings['system_logo']) ? asset($settings['system_logo']) : asset('images/default-logo.jpg') }}" 
-             width="55" height="60">
-        </h3></div>
+        <div class="logo">
+            <h3>
+                <img src="{{ isset($settings['system_logo']) ? asset($settings['system_logo']) : asset('images/default-logo.jpg') }}" 
+                     width="55" height="60">
+            </h3>
+        </div>
         <span class="full">{{ $settings['system_name'] ?? 'POS System' }}</span>
         <span class="mini">PS</span>
     </div>
@@ -17,7 +15,7 @@
         <li><a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}"><i class="bi bi-grid"></i><span>Dashboard</span></a></li>
         @endif
 
-        @if(in_array('manage_products', $rolePermissions) || in_array('view_products', $rolePermissions) || in_array('view_categories', $rolePermissions) || in_array('view_stock', $rolePermissions))
+        @if($showProductsMenu)
         <li class="nav-item">
             <a href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#productsSubmenu" 
                class="nav-link d-flex align-items-center {{ (request()->is('*inventory/products*') || request()->is('*inventory/categories*') || request()->is('*inventory/stocks*')) ? '' : 'collapsed' }}" 
@@ -47,13 +45,26 @@
         @endif
 
         @if(in_array('view_reports', $rolePermissions))
-        <li><a href="{{route('pos.reports')}}" class="{{ request()->is('pos/reports*') ? 'active' : '' }}"><i class="bi bi-bar-chart-line"></i><span>Reports</span></a></li>
+        <li><a href="{{ route('pos.reports') }}" class="{{ request()->is('pos/reports*') ? 'active' : '' }}"><i class="bi bi-bar-chart-line"></i><span>Reports</span></a></li>
         @endif
 
         @if(in_array('manage_settings', $rolePermissions))
         <li><a href="{{ route('settings.index') }}" class="{{ request()->is('settings*') ? 'active' : '' }}"><i class="bi bi-gear"></i><span>Settings</span></a></li>
         @endif
-        <li><a href="{{ route('auth.logout') }}"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a></li>
+
+        <li class="logout-link mt-auto">
+            <form action="{{ route('auth.logout') }}" method="POST" class="d-inline w-100">
+                @csrf
+                <button type="submit" 
+                        class="nav-link btn btn-link d-flex align-items-center p-0 m-0 text-start w-100">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </li>
     </ul>
 </div>
-<script src="{{asset('/Js/sidebar.js')}}"></script>
+
+@push('scripts')
+<script src="{{ asset('/Js/sidebar.js') }}"></script>
+@endpush

@@ -156,12 +156,32 @@
         margin: 3px 10px;
     }
 
+    #sidebar ul .logout-link {
+     display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        gap: 12px;
+        color: #475569;
+        font-size: 15px;
+        text-decoration: none;
+        transition: 0.2s;
+        border-radius: 8px;
+        margin: 3px 10px;
+    }
+
     #sidebar ul li a:hover,
     #sidebar ul li a.active {
         background: #f1f5f9;
         color: #000;
         font-weight: 600;
     }
+
+    #sidebar ul .logout-link:hover,
+    #sidebar ul .logout-link button:hover {
+        background: #f1f5f9;
+        color: #000;
+        font-weight: 600;
+    } 
 
     #sidebar.collapsed ul li a span {
         display: none;
