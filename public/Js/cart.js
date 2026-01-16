@@ -66,6 +66,11 @@ $(document).ready(function () {
 
     renderCart();
 
+    // submit filters form when category select changes (moved from inline onchange)
+    $('#category-select').on('change', function () {
+        $('#filters-form').submit();
+    });
+
 
 const beep = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YRAAAAAA//////8=");
 const beepError = new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YRQAAAAA//////8=");

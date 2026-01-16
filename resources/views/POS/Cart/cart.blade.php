@@ -7,7 +7,7 @@
 
 <div class="sale-content">
 
-    <input id="barcode-input" type="text" autocomplete="off" style="opacity:0; position:absolute; pointer-events:none;">
+    <input id="barcode-input" type="text" autocomplete="off" class="barcode-input-hidden">
 
 
     <div class="product-content">
@@ -16,12 +16,12 @@
         <p class="subtitle">Select products or scan barcodes to add to cart</p>
 
 
-        <form method="GET">
+        <form method="GET" id="filters-form">
             <div class="filters-row">
 
                 <input type="search" name="search" class="filter-input" placeholder="Search products..."
                     value="{{ request('search') }}">
-                <select name="category" id="category-select" class="filter-input" onchange="this.form.submit()">
+                <select name="category" id="category-select" class="filter-input">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
                     <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
@@ -39,20 +39,23 @@
 
         <div class="products-grid">
             @foreach($filteredProducts as $product)
-            <div class="product-card" data-id="{{ $product->id }}" data-name="{{ $product->product_name }}"
+            @php
+                $stockQuantity = $product->stock?->quantity ?? 0;
+                $isOutOfStock = $stockQuantity <= 0;
+            @endphp
+            <div class="product-card {{ $isOutOfStock ? 'product-card-disabled' : '' }}" data-id="{{ $product->id }}" data-name="{{ $product->product_name }}"
                 data-price="{{ $product->product_price }}" data-description="{{ $product->product_description }}"
-                data-stock="{{ $product->stock?->quantity ?? 0 }}" @if(!$product->stock || $product->stock->quantity <=
-                    0) style="opacity:0.5; pointer-events:none;" @endif>
+                data-stock="{{ $stockQuantity }}">
 
                     <h4>{{ $product->product_name }}</h4>
                     <small>{{ $product->product_description }}</small>
                     <p>₱{{ number_format($product->product_price, 2) }}</p>
-                    @if($product->stock && $product->stock->quantity > 10)
-                    <small class="text-success">Stock: {{ $product->stock->quantity }}</small>
-                    @elseif($product->stock && $product->stock->quantity > 0 && $product->stock->quantity <= 10) <small
-                        class="text-warning">Low Stock: {{ $product->stock->quantity }}</small>
+                    @if($stockQuantity > 10)
+                    <small class="text-success">Stock: {{ $stockQuantity }}</small>
+                    @elseif($stockQuantity > 0 && $stockQuantity <= 10)
+                    <small class="text-warning">Low Stock: {{ $stockQuantity }}</small>
                     @else
-                        <small class="text-danger">Out of Stock</small>
+                    <small class="text-danger">Out of Stock</small>
                     @endif
             </div>
             @endforeach
@@ -103,7 +106,7 @@
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label for="total" class="form-label">Total Amount:</label>
+                        <label for="form-total" class="form-label">Total Amount:</label>
                         <h3 id="payment-total">₱0.00</h3>
                         <input type="hidden" name="total" id="form-total">
                     </div>
@@ -123,7 +126,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="change" class="form-label">Change:</label>
+                        <label for="form-change" class="form-label">Change:</label>
                         <h3 id="payment-change">₱0.00</h3>
                         <input type="hidden" name="change" id="form-change">
                     </div>
