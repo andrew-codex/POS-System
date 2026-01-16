@@ -26,7 +26,7 @@
             <tr>
                 <td>{{ $row->product_name }}</td>
                 <td>{{ $row->total_quantity }}</td>
-                <td>{{ number_format($row->total_sales,2) }}</td>
+                <td>{{ $row->total_sales }}</td>
             
             </tr>
             @endforeach

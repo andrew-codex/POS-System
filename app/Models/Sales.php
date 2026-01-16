@@ -7,6 +7,7 @@ use App\Models\Refund;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class Sales extends Model
 {
     protected $fillable = [
@@ -97,6 +98,27 @@ class Sales extends Model
         return $query;
     }
 
- 
+    public function getTotalAmountAttribute($value)
+    {
+        return number_format($value, 2);
+    }
 
+    public function getAmountReceivedAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+    public function getChangeAmountAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+     public function getFormattedCreatedAtAttribute()
+    {
+        return $this->created_at
+            ? $this->created_at->format('M j, Y')
+            : null;
+    }
+
+  
 }

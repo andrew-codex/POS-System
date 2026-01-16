@@ -49,7 +49,7 @@
             <td>{{ $row['sale_date'] }}</td>
             <td>{{ $row['total_invoices'] }}</td>
             <td>{{ $row['total_items_sold'] }}</td>
-            <td class="text-end">{{ number_format($row['total_sales'], 2) }}</td>
+            <td class="text-end">{{ $row['total_sales'] }}</td>
         </tr>
         @empty
         <tr>

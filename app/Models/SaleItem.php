@@ -46,5 +46,18 @@ class SaleItem extends Model
             ->groupBy('sale_items.product_id', 'p.product_name')
             ->orderBy('total_sales', 'desc');
     }
+
+    public function getPriceAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+    public function getSubtotalAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+
+    
   
 }

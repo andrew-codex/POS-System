@@ -26,7 +26,7 @@
                 <td>{{ $row->sale_date }}</td>
                 <td>{{ $row->total_invoices }}</td>
                 <td>{{ $row->total_items_sold }}</td>
-                <td>{{ number_format($row->total_sales,2) }}</td>
+                <td>{{ $row->total_sales }}</td>
             </tr>
             @endforeach
         </tbody>

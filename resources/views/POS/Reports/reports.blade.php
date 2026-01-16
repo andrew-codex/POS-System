@@ -9,11 +9,11 @@
 
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button"
-                role="tab">Sales by Date & Product</button>
+                role="tab" aria-controls="sales" aria-selected="true">Sales by Date & Product</button>
         </li>
         <li>
             <button class="nav-link" id="invoice-tab" data-bs-toggle="tab" data-bs-target="#invoice" type="button"
-                role="tab">
+                role="tab" aria-controls="invoice" aria-selected="false">
                 Invoice Details
             </button>
         </li>
@@ -44,6 +44,8 @@
 
     </div>
 </div>
+@endsection
 
-    <script src="{{asset('/Js/reports.js')}}"></script>
-    @endsection
+@section('scripts')
+<script src="{{ asset('/Js/reports.js') }}"></script>
+@endsection

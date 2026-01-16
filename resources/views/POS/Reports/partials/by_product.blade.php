@@ -19,7 +19,7 @@
         <tr>
             <td>{{ $row['product_name'] }}</td>
             <td>{{ $row['total_quantity'] }}</td>
-            <td class="text-end">${{ number_format($row['total_sales'], 2) }}</td>
+            <td class="text-end">{{ $row['total_sales']}}</td>
         </tr>
         @empty
         <tr>

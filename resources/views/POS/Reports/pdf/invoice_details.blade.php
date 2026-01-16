@@ -32,13 +32,13 @@
             <tr>
                 <td>{{ $row->invoice_no }}</td>
                 <td>{{ $row->status }}</td>
-                <td>{{ number_format($row->total_amount,2) }}</td>
-                <td>{{ number_format($row->amount_received,2) }}</td>
-                <td>{{ number_format($row->change_amount,2) }}</td>
+                <td>{{ $row->total_amount }}</td>
+                <td>{{ $row->amount_received }}</td>
+                <td>{{ $row->change_amount }}</td>
                 <td>{{ $row->product_name }}</td>
                 <td>{{ $row->quantity }}</td>
-                <td>{{ number_format($row->price,2) }}</td>
-                <td>{{ number_format($row->subtotal,2) }}</td>
+                <td>{{ $row->price }}</td>
+                <td>{{ $row->subtotal }}</td>
                 <td>{{ $row->created_at }}</td>
             </tr>
             @endforeach

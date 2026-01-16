@@ -54,18 +54,18 @@
                 @forelse($invoiceDetails as $row)
                 <tr>
                     <td>{{ $row['invoice_no'] }}</td>
-                    <td class="text-end">{{ number_format($row['total_amount'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['amount_received'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['change_amount'], 2) }}</td>
+                    <td class="text-end">{{ $row['total_amount'] }}</td>
+                    <td class="text-end">{{ $row['amount_received'] }}</td>
+                    <td class="text-end">{{ $row['change_amount'] }}</td>
                     <td>{{ $row['product_name'] }}</td>
                     <td class="text-end">{{ $row['quantity'] }}</td>
-                    <td class="text-end">{{ number_format($row['price'], 2) }}</td>
-                    <td class="text-end">{{ number_format($row['subtotal'], 2) }}</td>
-                    <td>{{ \Carbon\Carbon::parse($row['created_at'])->format('M j, Y') }}</td>
+                    <td class="text-end">{{ $row['price'] }}</td>
+                    <td class="text-end">{{ $row['subtotal'] }}</td>
+                    <td>{{ $row['created_at'] }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="10" class="text-center">No records found.</td>
+                    <td colspan="9" class="text-center">No records found.</td>
                 </tr>
                 @endforelse
             </tbody>
