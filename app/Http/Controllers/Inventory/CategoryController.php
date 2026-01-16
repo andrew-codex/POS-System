@@ -21,8 +21,10 @@ class CategoryController extends Controller
         }
 
         $categories = Category::when($search, function ($query, $search) {
-                return $query->where('category_name', 'like', "%{$search}%")
-                            ->orWhere('category_description', 'like', "%{$search}%");
+                return $query->where(function ($q) use ($search) {
+                    $q->where('category_name', 'like', '%' . $search . '%')
+                      ->orWhere('category_description', 'like', '%' . $search . '%');
+                });
             })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -97,19 +99,16 @@ class CategoryController extends Controller
         return redirect()->route('inventory.categories')->with('success', 'Category updated successfully.');
     }
 
-    public function destroy(Category $category, $id)
+    public function destroy(Category $category)
     {
-        $category = Category::findOrFail($id);
-
       
         $this->logActivity("Deleted Category", [
             "category_id" => $category->id,
             "name"        => $category->category_name
         ]);
 
-        Category::destroy($id);
+        $category->delete();
 
         return redirect()->route('inventory.categories')->with('success', 'Category deleted successfully.');
     }
-
 }
