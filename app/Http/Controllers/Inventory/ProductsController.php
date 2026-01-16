@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Products;
 use App\Models\Category;
+use App\Models\Stocks;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
 class ProductsController extends Controller
@@ -21,9 +22,10 @@ public function index(Request $request)
 
  
     if ($search) {
-        $query->where(function($q) use ($search) {
-            $q->where('product_name', 'like', "%{$search}%")
-              ->orWhere('product_description', 'like', "%{$search}%");
+        $escapedSearch = addcslashes($search, '%_');
+        $query->where(function($q) use ($escapedSearch) {
+            $q->where('product_name', 'like', '%' . $escapedSearch . '%')
+              ->orWhere('product_description', 'like', '%' . $escapedSearch . '%');
         });
     }
 
@@ -39,7 +41,7 @@ public function index(Request $request)
         'category' => $selectedCategory,
     ]);
 
-    $categories = Category::all();
+    $categories = Category::select('id', 'category_name')->get();
 
     return view('Inventory.products.products', compact('products', 'categories', 'selectedCategory', 'search'));
 }
@@ -47,7 +49,7 @@ public function index(Request $request)
   
     public function create()
     {
-        $categories = Category::all();
+        $categories = Category::select('id', 'category_name')->get();
         return view('Inventory.products.create_products', compact('categories'));
     }
 
@@ -64,20 +66,41 @@ public function store(Request $request)
     ]);
 
     
-    $product = Products::create([
-        'product_name' => $request->input('product_name'),
-        'product_description' => $request->input('product_description'),
-        'product_price' => $request->input('product_price'),
-        'product_barcode' => $request->input('product_barcode'),
-        'category_id' => $request->input('category_id'),
-    ]);
+    // Wrap product creation and initial stock creation in a DB transaction
+    $initialStock = $request->input('initial_stock');
 
-    $this->logActivity("Created Product", [
-        "product_id" => $product->id,
-        "name"       => $product->product_name
-    ]);
+    DB::beginTransaction();
+    try {
+        $product = Products::create([
+            'product_name' => $request->input('product_name'),
+            'product_description' => $request->input('product_description'),
+            'product_price' => $request->input('product_price'),
+            'product_barcode' => $request->input('product_barcode'),
+            'category_id' => $request->input('category_id'),
+        ]);
 
+        $this->logActivity("Created Product", [
+            "product_id" => $product->id,
+            "name"       => $product->product_name
+        ]);
 
+        if (is_numeric($initialStock) && (int)$initialStock > 0) {
+            Stocks::create([
+                'product_id' => $product->id,
+                'quantity' => (int)$initialStock,
+            ]);
+
+            $this->logActivity("Initial Stock Set", [
+                "product_id" => $product->id,
+                "quantity" => (int)$initialStock,
+            ]);
+        }
+
+        DB::commit();
+    } catch (\Exception $e) {
+        DB::rollBack();
+        throw $e;
+    }
 
     return redirect()->route('inventory.products')->with('success', 'Product created successfully.');
 }
@@ -87,7 +110,8 @@ public function store(Request $request)
     public function edit($id)
     {
         $product = Products::findOrFail($id);
-        return view('Inventory.products.edit_products', compact('product'));
+        $categories = Category::all();
+        return view('Inventory.products.edit_products', compact('product', 'categories'));
     }
     
    
@@ -98,7 +122,7 @@ public function store(Request $request)
             'product_description' => 'nullable|string',
             'product_price' => 'required|numeric',
             'product_barcode' => 'nullable|string|max:100',
-            'product_category' => 'nullable|string|max:100',
+            'category_id' => 'nullable|string|max:100',
         ]);
 
         $product = Products::findOrFail($id);
@@ -114,7 +138,7 @@ public function store(Request $request)
 
 
   
-    public function destroy(Products $product, $id)
+    public function destroy($id)
     {
         Products::findOrFail($id);
 
