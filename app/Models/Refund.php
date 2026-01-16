@@ -29,4 +29,14 @@ class Refund extends Model
     {
         return $this->belongsTo(User::class, 'refunded_by');
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return date('M d, Y', strtotime($value));
+    }
+
+    public function getRefundAmountAttribute($value)
+    {
+        return number_format($value, 2);
+    }
 }

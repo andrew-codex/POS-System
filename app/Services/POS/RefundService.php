@@ -54,9 +54,13 @@ class RefundService
             $totalRefunded = $sale->totalRefunded();
             $hasExchange = $sale->refunds()->whereHas('items', fn($q) => $q->where('is_changed', 1))->exists();
 
+            $rawTotal = $sale->getOriginal('total_amount') ?? $sale->total_amount;
+            $clean = preg_replace('/[^0-9.\-]/', '', (string) $rawTotal);
+            $rawTotal = $clean === '' ? 0.0 : (float) $clean;
+
             if ($hasExchange) {
                 $sale->update(['status' => 'exchanged']);
-            } elseif ($totalRefunded >= $sale->total_amount) {
+            } elseif ($totalRefunded >= $rawTotal) {
                 $sale->update(['status' => 'refunded']);
             } elseif ($totalRefunded > 0) {
                 $sale->update(['status' => 'partially_refunded']);

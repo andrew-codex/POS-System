@@ -34,4 +34,19 @@ class RefundItem extends Model
         return $this->belongsTo(Products::class, 'new_product_id');
     }
 
+    public function getCreatedAtAttribute($value)
+    {
+        return date('M d, Y', strtotime($value));
+    }
+
+    public function getPriceAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
+    public function getNewPriceAttribute($value)
+    {
+        return number_format($value, 2);
+    }
+
 }

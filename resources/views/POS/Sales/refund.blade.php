@@ -10,7 +10,7 @@
     </div>
 
     @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
+    <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
     <div class="card mb-4">
@@ -21,8 +21,8 @@
 
                 <div class="mb-3">
                     <label>Refund Amount</label>
-                    <input type="number" id="refund_amount" name="refund_amount" step="0.01" 
-                           class="form-control fw-bold text-primary" readonly required>
+                    <input type="number" id="refund_amount" name="refund_amount" step="0.01"
+                        class="form-control fw-bold text-primary" readonly required>
                 </div>
 
                 <div class="mb-3">
@@ -54,65 +54,66 @@
                             </tr>
                         </thead>
                         <tbody>
-                        @php
-                            $alreadyProcessed = $sale->refunds()->with('items')->get()->pluck('items.*.product_id')->flatten()->toArray();
-                        @endphp
-                        @foreach($sale->items as $item)
-                        <tr class="refund-row">
-                            <td>{{ $item->product->product_name }}
-                                @if(in_array($item->product_id, $alreadyProcessed))
+                            @foreach($sale->items as $item)
+                            <tr class="refund-row">
+                                <td>{{ $item->product->product_name }}
+                                    @if(in_array($item->product_id, $alreadyProcessed))
                                     <span class="badge bg-warning text-dark">Already Processed</span>
-                                @endif
-                            </td>
-                            <td>
-                                <input type="number" class="form-control refund-qty"
-                                       name="items[{{ $item->id }}][quantity]"
-                                       max="{{ $item->quantity }}" min="0"
-                                       value="0"
-                                       @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif>
-                                <input type="hidden" class="refund-price" value="{{ $item->price }}">
-                                <input type="hidden" name="items[{{ $item->id }}][product_id]" value="{{ $item->product_id }}">
-                                <input type="hidden" name="items[{{ $item->id }}][price]" value="{{ $item->price }}">
-                            </td>
-                            <td>₱{{ number_format($item->price,2) }}</td>
-                            <td class="refund-amount fw-bold text-primary">₱0.00</td>
-                            <td><input type="checkbox" name="items[{{ $item->id }}][is_expired]" value="1"
-                                @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif></td>
-                            <td><input type="checkbox" name="items[{{ $item->id }}][is_damaged]" value="1"
-                                @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif></td>
-                            <td><input type="checkbox" class="is-changed"
-                                       name="items[{{ $item->id }}][is_changed]" value="1"
-                                       @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif></td>
-                        </tr>
+                                    @endif
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control refund-qty"
+                                        name="items[{{ $item->id }}][quantity]" max="{{ $item->quantity }}" min="0"
+                                        value="0" @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif>
+                                    <input type="hidden" class="refund-price" value="{{ $item->price }}">
+                                    <input type="hidden" name="items[{{ $item->id }}][product_id]"
+                                        value="{{ $item->product_id }}">
+                                    <input type="hidden" name="items[{{ $item->id }}][price]"
+                                        value="{{ $item->price }}">
+                                </td>
+                                <td>₱{{ number_format($item->price,2) }}</td>
+                                <td class="refund-amount fw-bold text-primary">₱0.00</td>
+                                <td>
+                                    <input type="checkbox" name="items[{{ $item->id }}][is_expired]" value="1"
+                                        @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif></td>
+                                <td>
+                                    <input type="checkbox" name="items[{{ $item->id }}][is_damaged]" value="1"
+                                        @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif></td>
+                                <td>
+                                    <input type="checkbox" class="is-changed" name="items[{{ $item->id }}][is_changed]"
+                                        value="1" @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif>
+                                </td>
+                            </tr>
 
-                        <tr class="exchange-row d-none bg-light">
-                            <td colspan="7">
-                                <div class="row p-2">
-                                    <div class="col-md-4">
-                                        <label>Replace With</label>
-                                        <select class="form-control new-product"
+                            <tr class="exchange-row d-none bg-light">
+                                <td colspan="7">
+                                    <div class="row p-2">
+                                        <div class="col-md-4">
+                                            <label>Replace With</label>
+                                            <select class="form-control new-product"
                                                 name="items[{{ $item->id }}][new_product_id]">
-                                            <option value="">-- Select --</option>
-                                            @foreach($products as $p)
+                                                <option value="">-- Select --</option>
+                                                @foreach($products as $p)
                                                 <option value="{{ $p->id }}" data-price="{{ $p->product_price }}">
                                                     {{ $p->product_name }} - ₱{{ number_format($p->product_price,2) }}
                                                 </option>
-                                            @endforeach
-                                        </select>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>New Price</label>
+                                            <input type="text" class="form-control new-price" readonly>
+                                            <input type="hidden" name="items[{{ $item->id }}][new_price]"
+                                                class="new-price-hidden">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Difference</label>
+                                            <input type="text" class="form-control difference fw-bold" readonly>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label>New Price</label>
-                                        <input type="text" class="form-control new-price" readonly>
-                                        <input type="hidden" name="items[{{ $item->id }}][new_price]" class="new-price-hidden">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label>Difference</label>
-                                        <input type="text" class="form-control difference fw-bold" readonly>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
+                                </td>
+                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -131,16 +132,13 @@
             @forelse($refunds as $refund)
             <div class="mb-3 pb-3 p-3 border rounded shadow-sm bg-light">
                 <h6>Refund #{{ $refund->id }} - Processed by {{ $refund->user->name ?? 'N/A' }}
-                    ({{ $refund->created_at->format('M d, Y H:i') }})</h6>
+                    ({{ $refund->created_at }})</h6>
                 <p>
-                    <strong>Amount:</strong> ₱{{ number_format($refund->refund_amount, 2) }} |
+                    <strong>Amount:</strong> ₱{{ $refund->refund_amount }} |
                     <strong>Type:</strong> {{ ucfirst(str_replace('_',' ', $refund->refund_type)) }} |
                     <strong>Reason:</strong> {{ $refund->refund_reason ?? '-' }}
-                    @php
-                        $hasExchange = $refund->items->contains(fn($i) => (int)$i->is_changed === 1);
-                    @endphp
-                    @if($hasExchange)
-                        | <span class="badge bg-info text-dark">Exchange Involved</span>
+                    @if(!empty($refund->has_exchange))
+                    | <span class="badge bg-info text-dark">Exchange Involved</span>
                     @endif
                 </p>
             </div>
@@ -148,9 +146,9 @@
             <p class="text-center text-muted">No refunds yet.</p>
             @endforelse
 
-         
+
             @if(method_exists($refunds, 'links'))
-                <div class="d-flex justify-content-center">{{ $refunds->links() }}</div>
+            <div class="d-flex justify-content-center">{{ $refunds->links() }}</div>
             @endif
         </div>
     </div>
@@ -175,42 +173,42 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach($refundItems as $item)
+                    @foreach($refundItems as $item)
                     <tr>
-                        <td>{{ $item->created_at?->format('M d, Y H:i') }}</td>
+                        <td>{{ $item->created_at }}</td>
                         <td>{{ $item->product->product_name ?? 'N/A' }}</td>
                         <td>{{ $item->quantity }}</td>
-                        <td>₱{{ number_format($item->price,2) }}</td>
+                        <td>₱{{ $item->price }}</td>
                         <td>{{ $item->is_expired ? 'Yes' : 'No' }}</td>
                         <td>{{ $item->is_damaged ? 'Yes' : 'No' }}</td>
                         <td>{{ $item->is_changed ? 'Yes' : 'No' }}</td>
                         <td>
                             @if($item->is_changed)
-                                <span class="badge bg-info text-dark">Exchanged</span>
+                            <span class="badge bg-info text-dark">Exchanged</span>
                             @elseif($item->is_expired || $item->is_damaged)
-                                <span class="badge bg-warning text-dark">Returned</span>
+                            <span class="badge bg-warning text-dark">Returned</span>
                             @else
-                                <span class="badge bg-success">Refunded</span>
+                            <span class="badge bg-success">Refunded</span>
                             @endif
                         </td>
                         <td>{{ $item->newProduct->product_name ?? '-' }}</td>
                         <td>
                             @if($item->is_changed)
-                                ₱{{ number_format($item->price,2) }} → ₱{{ number_format($item->new_price,2) }}
+                            ₱{{ $item->price }} → ₱{{ $item->new_price }}
                             @else
-                                -
+                            -
                             @endif
                         </td>
                     </tr>
-                @endforeach
+                    @endforeach
                 </tbody>
             </table>
-            {{-- Pagination for items --}}
+
             @if(method_exists($refundItems, 'links'))
-                <div class="d-flex justify-content-center">{{ $refundItems->links() }}</div>
+            <div class="d-flex justify-content-center">{{ $refundItems->links() }}</div>
             @endif
             @else
-                <p class="text-center text-muted">No refund items yet.</p>
+            <p class="text-center text-muted">No refund items yet.</p>
             @endif
         </div>
     </div>
