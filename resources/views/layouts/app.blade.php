@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,245 +12,147 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
-
-
+    
     <style>
-    body {
-        font-family: 'Inter', sans-serif;
-        font-weight: 400;
-        background: #f8f9fc;
-        margin: 0;
-        padding-top: 56px;
-        overflow-x: hidden;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fc;
+            margin: 0;
+            padding-top: 56px;
+            overflow-x: hidden;
+        }
 
-    h1,
-    h2,
-    h3,
-    .navbar-brand {
-        font-weight: 500;
-    }
+        #sidebar ul, #sidebar ul li {
+            list-style: none !important;
+            padding: 0;
+            margin: 0;
+        }
 
-    small,
-    .small-text {
-        font-weight: 300;
-    }
+        #sidebar {
+            display: flex;
+            flex-direction: column; 
+            width: 250px;
+            height: 100vh;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 56px;
+            z-index: 1040;
+        }
 
+        #sidebar.collapsed { width: 80px; }
 
-    #sidebar {
-        width: 250px;
-        height: 100vh;
-        background: #ffffff;
-        border-right: 1px solid #e2e8f0;
-        position: fixed;
-        top: 0;
-        left: 0;
-        transition: 0.3s;
-        padding-top: 56px;
-    }
+        /* Unified Link & Button Styling */
+        #sidebar ul li a, 
+        #sidebar ul .logout-link button {
+            display: flex;
+            align-items: center;
+            height: 48px;
+            padding: 0 16px;
+            gap: 12px;
+            color: #64748b;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin: 4px 12px;
+            border: none;
+            background: transparent;
+            width: calc(100% - 24px); 
+            box-sizing: border-box;
+            cursor: pointer;
+            white-space: nowrap;
+        }
 
-    #sidebar.collapsed {
-        width: 80px;
-    }
+        #sidebar ul li a:hover,
+        #sidebar ul .logout-link button:hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
 
-    .sidebar-brand {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 250px;
-        height: 56px;
-        background: #ffffff;
-        border-right: 1px solid #e2e8f0;
-        border-bottom: 1px solid #e2e8f0;
-        display: flex;
-        align-items: center;
-        padding-left: 20px;
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: #1e293b;
-        transition: 0.3s;
-        z-index: 1050;
-    }
+        #sidebar ul li a.active,
+        #sidebar ul li a[aria-expanded="true"] {
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
 
-    #sidebar.collapsed .sidebar-brand {
-        width: 80px;
-        justify-content: center;
-        padding-left: 0;
-    }
+        /* Submenu Fixes */
+        #sidebar ul .collapse {
+            list-style: none;
+            overflow: hidden; /* Prevents overlap during animation */
+        }
 
-    .sidebar-brand .mini {
-        display: none;
-    }
+        #sidebar ul .collapse li a {
+            height: 40px;
+            margin: 2px 12px 2px 40px; 
+            font-size: 14px;
+            width: calc(100% - 52px); /* Specifically shorter to stay inside */
+        }
 
-    #sidebar.collapsed .sidebar-brand .full {
-        display: none;
-    }
+        /* Bottom Push for Logout */
+        #sidebar ul.nav-list { height: 100%; display: flex; flex-direction: column; }
+        #sidebar .logout-link { margin-top: auto; margin-bottom: 20px; }
 
-    #sidebar.collapsed .sidebar-brand .mini {
-        display: block;
-    }
+        /* Collapsed State Overrides */
+        #sidebar.collapsed ul li a,
+        #sidebar.collapsed ul .logout-link button {
+            justify-content: center;
+            padding: 0;
+            margin: 4px 10px;
+            width: calc(100% - 20px);
+            gap: 0;
+        }
 
-    .navbar-custom {
-        background: #ffffff;
-        height: 56px;
-        position: fixed;
-        top: 0;
-        left: 250px;
-        right: 0;
-        z-index: 1000;
-        border-bottom: 1px solid #e2e8f0;
-        display: flex;
+        #sidebar.collapsed .full,
+        #sidebar.collapsed span, 
+        #sidebar.collapsed .ms-auto,
+        #sidebar.collapsed .collapse.show {
+            display: none !important;
+        }
 
-        align-items: center;
-        transition: 0.3s;
-    }
+        /* Layout Elements */
+        .navbar-custom {
+            background: #ffffff;
+            height: 56px;
+            position: fixed;
+            top: 0;
+            left: 250px;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+        #sidebar.collapsed ~ .navbar-custom { left: 80px; }
 
-    #sidebar.collapsed~.navbar-custom {
-        left: 80px;
-    }
+        .sidebar-brand {
+            position: fixed; top: 0; left: 0; width: 250px; height: 56px;
+            background: #ffffff; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; padding: 0 15px; transition: 0.3s; z-index: 1050;
+        }
+        #sidebar.collapsed .sidebar-brand { width: 80px; justify-content: center; padding: 0; }
 
-
-    .navbar-center {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .toggle-btn {
-        background: transparent;
-        border: none;
-        font-size: 1.6rem;
-        cursor: pointer;
-        color: #5a5a5aff;
-        border-radius: 8px;
-        padding-left: 2rem;
-
-
-    }
-
-    .navbar-brand {
-        color: #1e293b;
-        font-size: 1rem;
-        user-select: none;
-    }
-
-    #sidebar ul {
-        list-style: none;
-        padding-left: 0;
-        margin-top: 20px;
-    }
-
-    #sidebar ul li a {
-        display: flex;
-        align-items: center;
-        padding: 12px 20px;
-        gap: 12px;
-        color: #475569;
-        font-size: 15px;
-        text-decoration: none;
-        transition: 0.2s;
-        border-radius: 8px;
-        margin: 3px 10px;
-    }
-
-    #sidebar ul .logout-link {
-     display: flex;
-        align-items: center;
-        padding: 12px 20px;
-        gap: 12px;
-        color: #475569;
-        font-size: 15px;
-        text-decoration: none;
-        transition: 0.2s;
-        border-radius: 8px;
-        margin: 3px 10px;
-    }
-
-    #sidebar ul li a:hover,
-    #sidebar ul li a.active {
-        background: #f1f5f9;
-        color: #000;
-        font-weight: 600;
-    }
-
-    #sidebar ul .logout-link:hover,
-    #sidebar ul .logout-link button:hover {
-        background: #f1f5f9;
-        color: #000;
-        font-weight: 600;
-    } 
-
-    #sidebar.collapsed ul li a span {
-        display: none;
-    }
-
-    #sidebar.collapsed ul li a {
-        justify-content: center;
-    }
-
-
-    #content {
-        margin-left: 250px;
-        padding: 25px;
-        transition: 0.3s;
-    }
-
-    #content.expanded {
-        margin-left: 80px;
-    }
-
-    .required {
-        color: red;
-        margin-left: .2em;
-    }
-
-    #sidebar.collapsed ul .collapse {
-        position: absolute;
-        left: 80px;
-        top: auto !important;
-        background: #ffffff;
-        padding: 10px;
-        border-radius: 10px;
-        width: 180px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-        z-index: 9999;
-        transform: translateY(-12px);
-    }
-
-
-    #sidebar.collapsed ul .collapse.show {
-        display: block !important;
-    }
-
-
-    #sidebar.collapsed ul .collapse .nav-link {
-        padding-left: 10px !important;
-    }
-
-
-    #sidebar.collapsed .nav-link .ms-auto {
-        display: none;
-    }
-
-    .sidebar-brand .logo{
-        padding: 5px;
-    }
+        #content { margin-left: 250px; padding: 25px; transition: 0.3s; }
+        #content.expanded { margin-left: 80px; }
+        
+        .toggle-btn { background: transparent; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer; padding: 10px 20px; }
     </style>
 </head>
-
 <body>
     @include('components.sidebar')
+
     <nav class="navbar-custom">
-        <div class="navbar-center">
-            <button class="toggle-btn" onclick="toggleSidebar()">
-                <i class="bi bi-layout-sidebar-inset-reverse"></i>
-            </button>
-            <span class="navbar-brand">POS System</span>
-        </div>
-        <div class="time-zone ms-auto me-3">
-            <small class="text-info">{{ now()->setTimezone('Asia/Manila')->format('F j, g:i A') }}</small>
+        <button class="toggle-btn" onclick="toggleSidebar()">
+            <i class="bi bi-layout-sidebar-inset-reverse"></i>
+        </button>
+        <span class="ms-2 fw-bold">POS System</span>
+        <div class="ms-auto me-3 text-muted small">
+            {{ now()->setTimezone('Asia/Manila')->format('F j, g:i A') }}
         </div>
     </nav>
 
@@ -260,78 +161,17 @@
     </div>
 
     <script>
-    function toggleSidebar() {
-        let sidebar = document.getElementById("sidebar");
-        let content = document.getElementById("content");
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+            sidebar.classList.toggle("collapsed");
+            content.classList.toggle("expanded");
 
-        sidebar.classList.toggle("collapsed");
-        content.classList.toggle("expanded");
-
-
-        if (sidebar.classList.contains("collapsed")) {
-
-
-            document.querySelectorAll("#sidebar .collapse.show").forEach(submenu => {
-                let bs = bootstrap.Collapse.getInstance(submenu);
-
-                if (!bs) {
-                    bs = new bootstrap.Collapse(submenu, {
-                        toggle: false
-                    });
-                }
-
-                bs.hide();
-            });
-
-
-            document.querySelectorAll('#sidebar [data-bs-toggle="collapse"]').forEach(trigger => {
-                trigger.classList.add("collapsed");
-                trigger.setAttribute("aria-expanded", "false");
-            });
+            // Close submenus if collapsing
+            if (sidebar.classList.contains("collapsed")) {
+                $('.collapse').collapse('hide');
+            }
         }
-    }
-
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": true,
-        "progressBar": true,
-        "positionClass": "toast-top-right",
-        "preventDuplicates": true,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    };
-
-    @if(session('success'))
-    toastr.success("{{ session('success') }}");
-    @endif
-
-    @if(session('error'))
-    toastr.error("{{ session('error') }}");
-    @endif
-
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            toastr.error(@json($error));
-        @endforeach
-    @endif
     </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
-

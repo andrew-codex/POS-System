@@ -7,39 +7,69 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
             integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
             crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"
-            integrity="sha512-L3K7QqzX3r2X8q8N1k3p0QmO4b5v6gk2y7h9Y5h5VfZPZrj0p1l6e0b9s5c3d2f1g0h9Y5h5VfZPZrj0p1l6e0w=="
-            crossorigin="anonymous"></script>
-        <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css"
-          integrity="sha512-Gk6czS4fFqqpwYBFvToNiOfzmiEJeZVrDCTnhgypKekJy5o+1OtSWT8gJtIhXCTITVEWilQoNqT9XyM54q9Wug=="
-          crossorigin="anonymous">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <title>POS Login</title>
 </head>
 
 <body>
+    <div class="split-container">
+        <div class="left-panel">
+            <div class="brand-content">
+                <div class="logo-area">
+                    <span class="shield-icon"></span>
+                    <h1>POS System</h1>
+                </div>
+                <p class="description">Manage your retail operations with our powerful point-of-sale solution</p>
+                
+                <div class="image-card">
+                    <img src="{{ asset('images/login-image.jpg') }}" alt="POS Illustration">
+                </div>
 
-    <div class="login-card">
-        <div class="brand">
-            <h1>POS System</h1>
-            <p>Sign in to continue</p>
+                <div class="features">
+                    <span><i class="dot"></i> Inventory</span>
+                    <span><i class="dot"></i> Sales</span>
+                    <span><i class="dot"></i> Reports</span>
+                </div>
+            </div>
         </div>
 
-        <form action="{{ route('auth.login.submit') }}" method="POST">
-            @csrf
-            <div class="form-group ">
-                <label class="required" for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="youremail@example.com" value="{{ old('email') }}"
-                    required>
+        <div class="right-panel">
+            <div class="login-card">
+                <div class="form-header">
+                    <h2>Welcome back</h2>
+                    <p>Sign in to your admin account</p>
+                </div>
+
+                <form action="{{ route('auth.login.submit') }}" method="POST">
+                    @csrf
+                  <div class="form-group">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="admin@company.com" value="{{ old('email') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password <span class="required">*</span></label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                    <div class="form-footer">
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="remember">
+                            <span class="checkmark"></span> Remember me
+                        </label>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-sign-in">Sign In</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label class="required" for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="******" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
+            <footer class="copyright">
+                © 2026 POS System. All rights reserved.
+            </footer>
+        </div>
     </div>
     <script>
     toastr.options = {

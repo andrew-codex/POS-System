@@ -1,15 +1,16 @@
-function confirmLogout(event) {
+document.getElementById('logout-trigger').addEventListener('click', function(e) {
     Swal.fire({
-        title: "Are you sure?",
-        text: "You will be logged out of the system.",
-        icon: "warning",
+        title: 'Are you sure?',
+        text: "You will be logged out of your session!",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#dc3545",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Logout",
+        confirmButtonColor: '#2563eb', 
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Yes, logout!',
+        cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
             document.getElementById('logout-form').submit();
         }
     });
-}
+});

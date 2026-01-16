@@ -13,7 +13,7 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Current Logo</label><br>
-                <img src="{{ isset($settings['system_logo']) ? asset($settings['system_logo']) : asset('images/default-logo.jpg') }}"
+                 <img src="{{ isset($settings['system_logo']) ? asset($settings['system_logo']) : asset('images/logo.jpg') }}"
                      alt="Logo" width="100" height="100" class="border rounded">
             </div>
         </div>
