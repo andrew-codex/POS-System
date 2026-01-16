@@ -23,28 +23,28 @@
             @csrf
 
             <div class="form-group">
-                <label>Product Name <span class="required">*</span></label>
+                <label for="product_name">Product Name <span class="required">*</span></label>
                 <input type="text" name="product_name" required>
             </div>
 
 
             <div class="form-group">
-                <label>Description <span class="required">*</span></label>
+                <label for="product_description">Description <span class="required">*</span></label>
                 <input type="text" name="product_description" required>
             </div>
 
             <div class="form-group">
-                <label>Price <span class="required">*</span></label>
+                <label for="product_price">Price <span class="required">*</span></label>
                 <input type="number" name="product_price" step="0.01" required>
             </div>
 
             <div class="form-group">
-                <label>Barcode <span class="required">*</span></label>
+                <label for="product_barcode">Barcode <span class="required">*</span></label>
                 <input type="text" name="product_barcode" required>
             </div>
 
             <div class="form-group">
-                <label>Category <span class="required">*</span></label>
+                <label for="category_id">Category <span class="required">*</span></label>
                 <select name="category_id" required>
                     <option value="" disabled selected>-- Select Category --</option>
                     @foreach($categories as $category)

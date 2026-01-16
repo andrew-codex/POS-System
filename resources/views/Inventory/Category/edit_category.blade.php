@@ -24,12 +24,12 @@
             @method('PUT')
 
             <div class="form-group">
-                <label>Category Name <span class="required">*</span></label>
+                <label for="category_name">Category Name <span class="required">*</span></label>
                 <input type="text" name="category_name" value="{{$category->category_name}}" required>
             </div>
 
             <div class="form-group">
-                <label>Description <span class="required">*</span></label>
+                <label for="category_description">Description <span class="required">*</span></label>
                 <input type="text" name="category_description" value="{{$category->category_description}}" required>
             </div>
 

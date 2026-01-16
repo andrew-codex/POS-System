@@ -46,11 +46,9 @@
                         <td>{{ $category->category_name }}</td>
                         <td>{{ $category->category_description }}</td>
                         <td>
-                            <form action="{{route('categories.edit',$category->id)}}" method="GET" style="display:inline;">
-                                <button class="btn-edit">
-                                    <i class="bi bi-pencil"></i>Edit
-                                </button>
-                            </form>
+                            <a href="{{ route('categories.edit', $category->id) }}" class="btn-edit" role="button">
+                                <i class="bi bi-pencil"></i>Edit
+                            </a>
 
                             <form id="delete-form-{{ $category->id }}"
                                 action="{{ route('categories.destroy', $category->id) }}" method="POST"
@@ -76,7 +74,7 @@
                     {{ $categories->total() }} categories
                 </span>
                 @else
-                <span class="result-links no-products">No categories found.</span>
+                <span class="result-links no-categories">No categories found.</span>
                 @endif
             </div>
             <div>

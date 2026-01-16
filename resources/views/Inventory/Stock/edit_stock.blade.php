@@ -24,13 +24,13 @@
             @method('PUT')
 
             <div class="form-group">
-                <label>Product Name<span class="required">*</span></label>
+                <label for="product_id">Product Name<span class="required">*</span></label>
                 <input type="text" value="{{ $stock->product->product_name }}" disabled>
                 <input type="hidden" name="product_id" value="{{ $stock->product_id }}">
             </div>
 
             <div class="form-group">
-                <label>Quantity <span class="required">*</span></label>
+                <label for="quantity">Quantity <span class="required">*</span></label>
                 <input type="number" name="quantity" value="{{ $stock->quantity }}" required>
             </div>
 

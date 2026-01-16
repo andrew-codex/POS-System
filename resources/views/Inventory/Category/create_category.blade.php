@@ -24,13 +24,13 @@
             @method('POST')
 
             <div class="form-group">
-                <label>Category Name <span class="required">*</span></label>
-                <input type="text" name="category_name" required>
+                <label for="category_name">Category Name <span class="required">*</span></label>
+                <input type="text" name="category_name" id="category_name" required>
             </div>
 
             <div class="form-group">
-                <label>Description <span class="required">*</span></label>
-                <input type="text" name="category_description" required>
+                <label for="category_description">Description <span class="required">*</span></label>
+                <input type="text" name="category_description" id="category_description" required>
             </div>
 
             <div class="form-actions">

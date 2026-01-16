@@ -24,7 +24,7 @@
             @method('POST')
 
             <div class="form-group">
-                <label>Product Name<span class="required">*</span></label>
+                <label for="product_id">Product Name<span class="required">*</span></label>
                 @if(isset($productId))
 
                 <input type="text" class="form-control"
@@ -44,7 +44,7 @@
             </div>
 
             <div class="form-group">
-                <label>Quantity <span class="required">*</span></label>
+                <label for="quantity">Quantity <span class="required">*</span></label>
                 <input type="number" name="quantity" required>
             </div>
 

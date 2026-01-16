@@ -14,11 +14,11 @@
             <p class="subtitle">Manage your product stock levels</p>
         </div>
         <div>
-          
-                <a class="btn-primary" href="{{ route('stock.create') }}">
-                    <i class="bi bi-plus"></i>Add Stock
-                </a>
-        
+
+            <a class="btn-primary" href="{{ route('stock.create') }}">
+                <i class="bi bi-plus"></i>Add Stock
+            </a>
+
         </div>
     </div>
 
@@ -67,16 +67,16 @@
                     <td>{{ $stock->product->category->category_name }}</td>
                     <td>{{ $stock->quantity }}</td>
                     <td>
-                        <form action="{{ route('stock.edit', $stock->id) }}" method="GET" style="display:inline;">
-                            <button class="btn-edit">
-                                <i class="bi bi-pencil"></i>Edit
-                            </button>
-                        </form>
-                        
-                            <a class="btn-add-stock" href="{{ route('stock.create', ['product_id' => $stock->product->id]) }}">
-                                <i class="bi bi-plus"></i> Add Stock
-                            </a>
-                    
+                        <a href="{{ route('stock.edit', $stock->id) }}" class="btn-edit" role="button">
+                            <i class="bi bi-pencil"></i>Edit
+                        </a>
+
+
+                        <a class="btn-add-stock"
+                            href="{{ route('stock.create', ['product_id' => $stock->product->id]) }}">
+                            <i class="bi bi-plus"></i> Add Stock
+                        </a>
+
                     </td>
                 </tr>
                 @endforeach
