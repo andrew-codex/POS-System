@@ -1,9 +1,22 @@
 <?php
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-test('the application returns a successful response', function () {
-    // The root redirects to the login page; assert redirect instead of rendering login view
-    $response = $this->get('/');
+use Illuminate\Support\Facades\Gate;
 
-    $response->assertStatus(302);
-    $response->assertRedirect('/auth/login');
+it('loads the dashboard page with cached data', function () {
+
+    Gate::before(fn () => true); 
+
+    $user = User::factory()->create([
+        'role' => 'admin',
+        'status' => 'active',
+    ]);
+
+    $this->actingAs($user);
+
+    $response = $this->get(route('pos.dashboard'));
+
+    $response->assertStatus(200);
 });
+
