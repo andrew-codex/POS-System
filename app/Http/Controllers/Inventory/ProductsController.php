@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Products;
 use App\Models\Category;
 use App\Models\Stocks;
+use App\Models\SaleItem;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
 class ProductsController extends Controller
@@ -140,13 +141,29 @@ public function store(Request $request)
   
     public function destroy($id)
     {
-        Products::findOrFail($id);
+        $product = Products::findOrFail($id);
 
-        Products::destroy($id);
+        $hasRefunds = $product->refunds()->exists();
+        $hasSaleItems = SaleItem::where('product_id', $id)->exists();
+        $hasStock = Stocks::where('product_id', $id)->exists();
+
+        if ($hasRefunds || $hasSaleItems || $hasStock) {
+            $this->logActivity('Failed Delete Product', [
+                'product_id' => $id,
+                'has_refunds' => $hasRefunds,
+                'has_sale_items' => $hasSaleItems,
+                'has_stock' => $hasStock,
+            ]);
+
+            return redirect()->route('inventory.products')->with('error', 'Product cannot be deleted because it has related records (sales, refunds, or stock). Consider archiving instead.');
+        }
+
+        $product->delete();
 
         $this->logActivity("Deleted Product", [
             "product_id" => $id,
         ]);
+
         return redirect()->route('inventory.products')->with('success', 'Product deleted successfully.');
     }
 }
