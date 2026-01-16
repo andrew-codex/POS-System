@@ -53,13 +53,10 @@ class StaffController extends Controller
             'role' => 'required|in:cashier,manager',
         ]);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
+        $user->fill($request->only(['name', 'email', 'phone', 'role']));
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
-        $user->role = $request->role;
         $user->save();
 
         return redirect()->route('settings.index')->with('success', 'User member updated successfully.');
@@ -68,6 +65,12 @@ class StaffController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
+
+        $authUser = auth()->user();
+        if (!$authUser || $authUser->role !== 'admin' || $authUser->id === $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $user->delete();
 
         return redirect()->route('settings.index')->with('success', 'User member deleted successfully.');
