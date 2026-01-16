@@ -9,7 +9,12 @@ function confirmDelete(formId) {
         confirmButtonText: "Delete",
     }).then((result) => {
         if (result.isConfirmed) {
-            document.getElementById(formId).submit();
+            if (typeof formId === 'string') {
+                const el = document.getElementById(formId);
+                if (el) el.submit();
+            } else if (formId && typeof formId.submit === 'function') {
+                formId.submit();
+            }
         }
     });
 }
