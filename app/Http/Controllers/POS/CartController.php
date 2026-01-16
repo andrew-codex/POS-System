@@ -25,14 +25,16 @@ class CartController extends Controller
 
  
     if (!empty($search)) {
-        $query->whereRaw('LOWER(product_name) LIKE ?', ['%' . strtolower($search) . '%']);
+        $escaped = addcslashes($search, '%_');
+        $query->where('product_name', 'LIKE', '%' . $escaped . '%');
     }
 
 
-    $filteredProducts = $query->get();
-    $categories = Category::all();
+    $filteredProducts = $query->paginate(8);
+    $categories = Category::select('id', 'category_name')->get();
+    $threshold = config('inventory.low_stock_threshold', 10);
     $lowStockItems = Stocks::with('product')
-        ->where('quantity', '<', 10)
+        ->where('quantity', '<', $threshold)
         ->orderBy('quantity', 'asc')
         ->paginate(8);
     return view('POS.Cart.cart', compact('categories', 'filteredProducts', 'lowStockItems'));
@@ -40,38 +42,5 @@ class CartController extends Controller
 
 
   
-    public function create()
-    {
-        //
-    }
-
-  
-    public function store(Request $request)
-    {
-        
-    }
-
- 
-    public function show(string $id)
-    {
-        
-    }
-
-  
-    public function edit(string $id)
-    {
-        
-    }
-
-    
-    public function update(Request $request, string $id)
-    {
-        
-    }
-
- 
-    public function destroy(string $id)
-    {
-        
-    }
+   
 }
