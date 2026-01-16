@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\POS;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sales;
@@ -9,9 +10,16 @@ use App\Models\Refund;
 use App\Models\RefundItem;
 use App\Models\Products;
 use App\Models\Stocks;
+use App\Services\POS\RefundService;
 use Illuminate\Support\Facades\DB;
 class RefundController extends Controller
 {
+    protected RefundService $refundService;
+
+    public function __construct(RefundService $refundService)
+    {
+        $this->refundService = $refundService;
+    }
 
     public function index(Sales $sale)
     {
@@ -63,52 +71,8 @@ class RefundController extends Controller
             }
         }
 
-        $productIds = $itemsToProcess->pluck('product_id')->filter()->unique()->values()->all();
-        $stocksMap = Stocks::whereIn('product_id', $productIds)->get()->keyBy('product_id');
-
         try {
-            DB::transaction(function () use ($sale, $request, $itemsToProcess, $stocksMap) {
-                $refund = Refund::create([
-                    'sale_id' => $sale->id,
-                    'refund_amount' => $request->refund_amount,
-                    'refund_type' => $request->refund_type,
-                    'refund_reason' => $request->refund_reason,
-                    'refunded_by' => auth()->id(),
-                ]);
-
-                foreach ($itemsToProcess as $item) {
-                    $refund->items()->create([
-                        'product_id' => $item['product_id'],
-                        'new_product_id' => $item['new_product_id'] ?? null,
-                        'quantity' => $item['quantity'] ?? 0,
-                        'price' => $item['price'],
-                        'new_price' => $item['new_price'] ?? null,
-                        'is_expired' => $item['is_expired'] ?? 0,
-                        'is_damaged' => $item['is_damaged'] ?? 0,
-                        'is_changed' => $item['is_changed'] ?? 0,
-                    ]);
-
-                    if (empty($item['is_changed']) && empty($item['is_expired']) && empty($item['is_damaged'])) {
-                        if (isset($stocksMap[$item['product_id']])) {
-                            Stocks::where('product_id', $item['product_id'])
-                                ->increment('quantity', $item['quantity']);
-                        }
-                    }
-                }
-
-                $totalRefunded = $sale->totalRefunded();
-                $hasExchange = $sale->refunds()->whereHas('items', fn($q) => $q->where('is_changed', 1))->exists();
-
-                if ($hasExchange) {
-                    $sale->update(['status' => 'exchanged']);
-                } elseif ($totalRefunded >= $sale->total_amount) {
-                    $sale->update(['status' => 'refunded']);
-                } elseif ($totalRefunded > 0) {
-                    $sale->update(['status' => 'partially_refunded']);
-                } else {
-                    $sale->update(['status' => 'completed']);
-                }
-            });
+            $this->refundService->processRefund($sale, $request, $itemsToProcess);
         } catch (\Throwable $e) {
             return redirect()->back()->with('error', 'Failed processing refund.');
         }
