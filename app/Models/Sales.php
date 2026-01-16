@@ -115,9 +115,7 @@ class Sales extends Model
 
      public function getFormattedCreatedAtAttribute()
     {
-        return $this->created_at
-            ? $this->created_at->format('M j, Y')
-            : null;
+        return date('M d, Y', strtotime($value));
     }
 
   

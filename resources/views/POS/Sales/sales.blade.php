@@ -31,7 +31,7 @@
 
                 <button class="btn-primary">Search</button>
 
-                @if(request('search ') || request('start_date') || request('end_date'))
+                @if(request('search') || request('status') || request('start_date') || request('end_date'))
                 <a href="{{ route('pos.sales') }}" class="btn-secondary">Clear</a>
                 @endif
             </form>
@@ -56,7 +56,7 @@
                     @foreach($sales as $sale)
                     <tr>
                         <td>{{ $sale->invoice_no }}</td>
-                        <td>{{ $sale->created_at->format('Y-m-d ') }}</td>
+                        <td>{{ $sale->created_at}}</td>
                         <td>{{ $sale->items->count() }}</td>
                         <td>{{ $sale->cashier->name }}</td>
                         <td>{{ $sale->total_amount }}</td>
