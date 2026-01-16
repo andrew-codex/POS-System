@@ -11,9 +11,24 @@
 |
 */
 
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+
 pest()->extend(Tests\TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
+
+// Ensure a minimal `settings` table exists for all tests to avoid errors from view composers
+beforeEach(function () {
+    if (!Schema::hasTable('settings')) {
+        Schema::create('settings', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('key')->unique();
+            $table->text('value')->nullable();
+            $table->timestamps();
+        });
+    }
+});
 
 /*
 |--------------------------------------------------------------------------
