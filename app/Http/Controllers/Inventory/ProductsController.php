@@ -10,101 +10,86 @@ use App\Models\Stocks;
 use App\Models\SaleItem;
 use App\Traits\LogsActivity;
 use Illuminate\Support\Facades\DB;
+use App\Services\POS\ProductService;
+use App\Services\POS\ProductSearchService;
+use Exception;
+
 class ProductsController extends Controller
 {
     use LogsActivity;
+   protected ProductService $productService;
+   protected ProductSearchService $searchService;
 
-public function index(Request $request)
-{
-    $search = $request->input('search');
-    $selectedCategory = $request->get('category');
-
-    $query = Products::query();
-
- 
-    if ($search) {
-        $escapedSearch = addcslashes($search, '%_');
-        $query->where(function($q) use ($escapedSearch) {
-            $q->where('product_name', 'like', '%' . $escapedSearch . '%')
-              ->orWhere('product_description', 'like', '%' . $escapedSearch . '%');
-        });
+    public function __construct(ProductService $productService, ProductSearchService $searchService)
+    {
+        $this->productService = $productService;
+        $this->searchService = $searchService;
     }
 
+    /**
+     * Display a listing of products
+     * 
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $selectedCategory = $request->get('category');
 
-    if ($selectedCategory) {
-        $query->where('category_id', $selectedCategory);
+        $products = $this->searchService->searchProducts($search, $selectedCategory);
+
+
+        $products->appends([
+            'search' => $search,
+            'category' => $selectedCategory,
+        ]);
+
+        $categories = $this->searchService->getAllCategories();
+
+        return view('Inventory.products.products', compact('products', 'categories', 'selectedCategory', 'search'));
     }
 
-   
-    $products = $query->orderBy('created_at', 'desc')->paginate(10);
-    $products->appends([
-        'search' => $search,
-        'category' => $selectedCategory,
-    ]);
-
-    $categories = Category::select('id', 'category_name')->get();
-
-    return view('Inventory.products.products', compact('products', 'categories', 'selectedCategory', 'search'));
-}
-
-  
+    /**
+     * Show the form for creating a new product
+     * 
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
-        $categories = Category::select('id', 'category_name')->get();
+        $categories = $this->searchService->getAllCategories();
         return view('Inventory.products.create_products', compact('categories'));
     }
 
-  
-public function store(Request $request)
-{
-    $request->validate([
-        'product_name' => 'required|string|max:255',
-        'product_description' => 'nullable|string',
-        'product_price' => 'required|numeric',
-        'product_barcode' => 'nullable|string|max:100',
-        'category_id' => 'nullable|exists:categories,id',
-        'initial_stock' => 'nullable|integer|min:0',
-    ]);
-
-    
-    // Wrap product creation and initial stock creation in a DB transaction
-    $initialStock = $request->input('initial_stock');
-
-    DB::beginTransaction();
-    try {
-        $product = Products::create([
-            'product_name' => $request->input('product_name'),
-            'product_description' => $request->input('product_description'),
-            'product_price' => $request->input('product_price'),
-            'product_barcode' => $request->input('product_barcode'),
-            'category_id' => $request->input('category_id'),
+    /**
+     * Store a newly created product in database
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'product_name' => 'required|string|max:255',
+            'product_description' => 'nullable|string',
+            'product_price' => 'required|numeric',
+            'product_barcode' => 'nullable|string|max:100',
+            'category_id' => 'nullable|exists:categories,id',
+            'initial_stock' => 'nullable|integer|min:0',
         ]);
 
-        $this->logActivity("Created Product", [
-            "product_id" => $product->id,
-            "name"       => $product->product_name
-        ]);
+        try {
+            $this->productService->createProduct($validated);
 
-        if (is_numeric($initialStock) && (int)$initialStock > 0) {
-            Stocks::create([
-                'product_id' => $product->id,
-                'quantity' => (int)$initialStock,
-            ]);
+            return redirect()->route('inventory.products')
+                ->with('success', 'Product created successfully.');
 
-            $this->logActivity("Initial Stock Set", [
-                "product_id" => $product->id,
-                "quantity" => (int)$initialStock,
-            ]);
+        } catch (Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to create product: ' . $e->getMessage());
         }
-
-        DB::commit();
-    } catch (\Exception $e) {
-        DB::rollBack();
-        throw $e;
     }
-
-    return redirect()->route('inventory.products')->with('success', 'Product created successfully.');
-}
 
 
 

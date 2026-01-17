@@ -43,10 +43,12 @@
                 </div>
                 <div class="form-group">
                     <label for="category">Category</label>
-                   <select name="product_category" id="category" required>
-                    <option value="beverages" {{ $product->product_category == 'beverages' ? 'selected' : '' }}>Beverages</option>
-                    <option value="food" {{ $product->product_category == 'food' ? 'selected' : '' }}>Food</option>
-                    <option value="dessert" {{ $product->product_category == 'dessert' ? 'selected' : '' }}>Dessert</option>
+                   <select name="category_id" id="category" required>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ $product->category_id == $category->id ? 'selected' : '' }}>
+                                {{ $category->category_name }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="form-actions">
