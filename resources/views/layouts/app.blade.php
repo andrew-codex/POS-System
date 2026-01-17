@@ -16,7 +16,7 @@
 </head>
 <body>
     @include('components.sidebar')
-
+    @include('components.alerts')
     <nav class="navbar-custom">
         <button class="toggle-btn" onclick="toggleSidebar()">
             <i class="bi bi-layout-sidebar-inset-reverse"></i>
@@ -41,14 +41,6 @@
                 $('.collapse').collapse('hide');
             }
         }
-
-
-        @if (session('success'))
-            toastr.success("{{ session('success') }}");
-        @endif
-        @if (session('error'))
-            toastr.error("{{ session('error') }}");
-        @endif
         
     </script>
     @stack('scripts')

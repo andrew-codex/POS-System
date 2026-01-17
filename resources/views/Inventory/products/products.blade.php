@@ -1,8 +1,8 @@
     @extends('layouts.app')
 
     @section('title', 'Products')
-
     @section('content')
+
     <link rel="stylesheet" href="{{asset('/css/Inventory/products.css')}}">
     <script src="{{asset('/js/products_page.js')}}"></script>
     <div class="content">

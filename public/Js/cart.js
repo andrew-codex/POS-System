@@ -66,7 +66,6 @@ $(document).ready(function () {
 
     renderCart();
 
-    // submit filters form when category select changes (moved from inline onchange)
     $('#category-select').on('change', function () {
         $('#filters-form').submit();
     });
