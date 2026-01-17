@@ -5,7 +5,7 @@ document.getElementById('logout-trigger').addEventListener('click', function(e) 
         text: "You will be logged out of your session!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#2563eb', 
+        confirmButtonColor: '#dc2626',
         cancelButtonColor: '#64748b',
         confirmButtonText: 'Yes, logout!',
         cancelButtonText: 'Cancel'
