@@ -194,3 +194,11 @@ th {
     font-size: 1rem;
     margin-left: 430px;
 }
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    font-size: 1rem;
+    color: #999999;
+    display: none;
+}

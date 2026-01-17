@@ -1,22 +1,6 @@
-function confirmDelete(formId) {
-    Swal.fire({
-        title: "Are you sure?",
-        text: "This action cannot be undone!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#dc3545",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Delete",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById(formId).submit();
-        }
-    });
-}
-
 $(document).ready(function () {
     const $searchInput = $("#searchInput");
-    const $categoryFilter = $("#category-filter");
+    const $categoryFilter = $("#categoryFilter");
     const $tableRows = $(".data-table tbody tr");
     const $emptyState = $("#emptyState");
     const $resultCount = $("#resultCount");
@@ -42,20 +26,16 @@ $(document).ready(function () {
             const categoryId = $row.data("category");
 
             const productName = $row.find("td:eq(0)").text().toLowerCase();
-            const description = $row.find("td:eq(1)").text().toLowerCase();
-            const price = $row.find("td:eq(2)").text().toLowerCase();
-            const barcode = $row.find("td:eq(3)").text().toLowerCase();
-            const category = $row.find("td:eq(4)").text().toLowerCase();
+            const category = $row.find("td:eq(1)").text().toLowerCase();
+            const quantity = $row.find("td:eq(2)").text().toLowerCase();
 
             const categoryMatch =
                 currentCategory === "" || categoryId == currentCategory;
 
             const searchMatch =
                 productName.includes(searchValue) ||
-                description.includes(searchValue) ||
-                price.includes(searchValue) ||
-                barcode.includes(searchValue) ||
                 category.includes(searchValue) ||
+                quantity.includes(searchValue) ||
                 searchValue === "";
 
             if (categoryMatch && searchMatch) {
@@ -74,7 +54,7 @@ $(document).ready(function () {
             $table.show();
             $emptyState.hide();
             $resultCount.show();
-            $resultCount.html(`Showing ${visibleCount} products`);
+            $resultCount.html(`Showing ${visibleCount} stocks`);
         }
     }
 });
