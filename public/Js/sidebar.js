@@ -1,4 +1,5 @@
 document.getElementById('logout-trigger').addEventListener('click', function(e) {
+    console.log('Logout trigger clicked');
     Swal.fire({
         title: 'Are you sure?',
         text: "You will be logged out of your session!",

@@ -7,7 +7,7 @@
         <span class="full ms-2">{{ $settings['system_name'] ?? 'POS System' }}</span>
     </div>
 
-    <ul class="nav-list flex-grow-1">
+    <ul class="nav-list grow">
         @if(in_array('view_dashboard', $rolePermissions))
         <li>
             <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
@@ -81,3 +81,7 @@
         </li>
     </ul>
 </div>
+
+@push('scripts')
+<script src="{{ asset('Js/sidebar.js') }}"></script>
+@endpush
