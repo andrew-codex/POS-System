@@ -52,7 +52,7 @@
                 <tr data-category="{{ $stock->product?->category_id }}">
                     <td>{{ $stock->product->product_name }}</td>
                     <td>{{ $stock->product->category->category_name }}</td>
-                    <td>{{ $stock->quantity }}</td>
+                   <td><span class="{{ $stock->quantity < 10 ? 'stock-low' : 'stock-normal' }}">{{ $stock->quantity }}</span></td>
                     <td>
                         <a href="{{ route('stock.edit', $stock->id) }}" class="btn-edit" role="button">
                             <i class="bi bi-pencil"></i>Edit

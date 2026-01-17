@@ -34,4 +34,9 @@ class Products extends Model
         return $this->hasMany(RefundItem::class, 'product_id');
     }
 
+    public function getFormattedProductPriceAttribute($value)
+    {
+        return number_format($this->$value, 2);
+    }
+
 }

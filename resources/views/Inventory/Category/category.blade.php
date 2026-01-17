@@ -19,7 +19,6 @@
     </div>
 
     <div class="table-header">
-        <!-- Live Search Input (No Form Submission) -->
         <div class="search-bar">
             <input type="text" id="searchInput" class="form-control" placeholder="Search categories..."
                 value="{{ request('search') ?? '' }}">
@@ -61,7 +60,7 @@
             </tbody>
         </table>
 
-        <!-- Empty State Message -->
+
         <div id="emptyState" style="display: none; text-align: center; padding: 40px;">
             <p style="font-size: 16px; color: #999;">No categories found.</p>
         </div>
@@ -69,18 +68,19 @@
 
     <div class="pagination-links">
         <div class="result-links">
-            <!-- Show result count only if categories exist -->
+
             @if($categories->total() > 0)
             <span id="resultCount">
-                Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of {{ $categories->total() }} categories
+                Showing {{ $categories->firstItem() }} to {{ $categories->lastItem() }} of {{ $categories->total() }}
+                categories
             </span>
             @else
-            <!-- Hidden by default, shown by jQuery when filtering returns results -->
+
             <span id="resultCount" style="display: none;"></span>
             @endif
         </div>
 
-        <!-- Show pagination only if categories exist -->
+
         @if($categories->hasPages())
         <div>
             {{ $categories->appends(request()->query())->links('pagination::simple-bootstrap-5') }}

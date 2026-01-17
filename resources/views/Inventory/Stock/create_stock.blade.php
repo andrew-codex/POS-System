@@ -3,7 +3,7 @@
 @section('title', 'Create Stock')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('/css/Inventory/create_products.css') }}">
+<link rel="stylesheet" href="{{ asset('/css/Inventory/create_stock.css') }}">
 <script src="{{ asset('/js/create_stock.js') }}"></script>
 
 <div class="content">

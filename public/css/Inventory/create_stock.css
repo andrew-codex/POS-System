@@ -1,8 +1,6 @@
-
 .content {
-    padding: 1rem;
-    padding-top: 0;
-    width: 100%; 
+    padding: 2rem;
+    width: 100%;
     margin: 0;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     box-sizing: border-box;
@@ -11,7 +9,7 @@
 .header {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
     margin-bottom: 2rem;
     width: 100%;
 }
@@ -33,29 +31,17 @@
     height: 42px;
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
+    color: #64748b;
     border-radius: 10px;
     transition: all 0.2s ease;
-    padding: 0; 
-}
-
-.btn-secondary a {
-    color: #64748b;
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
 }
 
 .btn-secondary:hover {
     background-color: #f8fafc;
+    color: #1e293b;
     border-color: #cbd5e1;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-.btn-secondary:hover a {
-    color: #1e293b;
 }
 
 
@@ -67,20 +53,14 @@
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
     width: 100%;
     box-sizing: border-box;
-    margin-top: 1rem;
 }
 
-#edit-form {
+
+#create-stock-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 2rem;
     row-gap: 0.5rem;
-}
-
-
-.form-group:nth-child(4), 
-.form-actions {
-    grid-column: span 2;
 }
 
 .form-group label {
@@ -110,12 +90,12 @@
     outline: none;
 }
 
-.form-group select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 1.2em;
+
+.form-group input:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border: 1px dashed #cbd5e1;
 }
 
 .form-group input:focus,
@@ -125,8 +105,9 @@
     box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
 }
 
-/* Actions & Update Button */
+
 .form-actions {
+    grid-column: span 2;
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid #f1f5f9;
@@ -157,10 +138,10 @@
 
 
 @media (max-width: 768px) {
-    #edit-form {
+    #create-stock-form {
         grid-template-columns: 1fr;
     }
-    .form-group:nth-child(4), 
+
     .form-actions {
         grid-column: span 1;
     }

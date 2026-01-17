@@ -3,7 +3,7 @@
 @section('title', 'Edit Category')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('/css/Inventory/create_category.css') }}">
+<link rel="stylesheet" href="{{ asset('/css/Inventory/edit_category.css') }}">
 <script src="{{ asset('/js/edit_category.js') }}"></script>
 
 <div class="content">

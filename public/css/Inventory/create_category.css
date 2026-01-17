@@ -1,96 +1,140 @@
+/* Container & Layout */
 .content {
-    padding: 0.4rem;
+    padding: 2rem;
+    width: 100%; 
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
 }
 
 .header {
     display: flex;
     align-items: center;
-    justify-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    width: 100%;
 }
 
 .title-section h2 {
-    font-style: uppercase;
-    padding-top: 0.5rem;
-    font-weight: 700;
-    font-size: 1.7rem;
-    text-align: center;
+    margin: 0;
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: #1e293b;
+    letter-spacing: -0.025em;
 }
 
+/* Back Button Styling */
 .btn-secondary {
-    border-style: none;
-    background-color: transparent;
-    color: black;
-    padding: 0.5rem 0.5rem;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    margin-right: 0.5rem;
-}
-
-.btn-secondary a {
-    color: rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    border-radius: 10px;
+    transition: all 0.2s ease;
     text-decoration: none;
 }
-.btn-secondary i {
-    margin-right: 0.25rem;
+
+.btn-secondary:hover {
+    background-color: #f8fafc;
+    color: #1e293b;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
+/* Form Container Card - Full Width */
 .form-container {
-    margin-top: 1rem;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 0.5rem;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.form-group {
-    margin-bottom: 1rem;
+/* 2-Column Grid Implementation */
+#create-category-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 2rem;
+    row-gap: 0.5rem;
+}
+
+/* Make both fields and actions span the full width if you prefer them stacked, 
+   OR leave as is for side-by-side Name and Description */
+.form-actions {
+    grid-column: span 2;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    text-align: right;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
     font-weight: 600;
+    font-size: 0.9rem;
+    color: #475569;
 }
 
-.form-group input{
+.required {
+    color: #ef4444;
+}
+
+/* Modern Input Styling */
+.form-group input {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    outline: none;
 }
 
 .form-group input:focus {
+    background-color: #ffffff;
     border-color: #4e73df;
-    outline: none;
-
+    box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
 }
 
-
-
-.form-actions {
-    margin-top: 1.5rem;
-    text-align: right;
-}
-
+/* Create Button */
 .form-actions .btn-primary {
-    padding: 0.5rem 0.7rem;
-    background-color: #4e73df;
-    border-color: #4e73df;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
     color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    border-style: solid;
+    padding: 12px 32px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(78, 115, 223, 0.35);
     transition: all 0.3s ease;
 }
 
 .form-actions .btn-primary:hover {
-    background-color: #2e59d9;
-    border-color: #2e59d9;
+    background: linear-gradient(135deg, #2e59d9 0%, #1e3bb3 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(78, 115, 223, 0.45);
 }
 
-.required {
-    color: red;
-    margin-left: 0.2em;
+
+@media (max-width: 768px) {
+    #create-category-form {
+        grid-template-columns: 1fr;
+    }
+    .form-actions {
+        grid-column: span 1;
+    }
 }
