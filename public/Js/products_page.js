@@ -21,6 +21,7 @@ $(document).ready(function () {
     const $emptyState = $("#emptyState");
     const $resultCount = $("#resultCount");
     const $table = $(".data-table");
+    const $paginationLinks = $(".pagination-links");
 
     let currentCategory = "";
 
@@ -70,11 +71,18 @@ $(document).ready(function () {
             $table.hide();
             $emptyState.show();
             $resultCount.hide();
+            $paginationLinks.hide();
         } else {
             $table.show();
             $emptyState.hide();
             $resultCount.show();
             $resultCount.html(`Showing ${visibleCount} products`);
+
+            if (searchValue !== "" || currentCategory !== "") {
+                $paginationLinks.find("div:last-child").hide();
+            } else {
+                $paginationLinks.find("div:last-child").show();
+            }
         }
     }
 });

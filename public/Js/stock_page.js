@@ -4,7 +4,13 @@ $(document).ready(function () {
     const $tableRows = $(".data-table tbody tr");
     const $emptyState = $("#emptyState");
     const $resultCount = $("#resultCount");
-    const $table = $(".data-table");
+    const $table = $(".stock-table");
+    const $stockContainer = $(".stock-container");
+    const $paginationLinks = $(".pagination-links");
+
+    console.log("Table found:", $table.length);
+    console.log("Empty state found:", $emptyState.length);
+    console.log("Rows found:", $tableRows.length);
 
     let currentCategory = "";
 
@@ -50,11 +56,18 @@ $(document).ready(function () {
             $table.hide();
             $emptyState.show();
             $resultCount.hide();
+            $paginationLinks.hide();
         } else {
             $table.show();
             $emptyState.hide();
             $resultCount.show();
             $resultCount.html(`Showing ${visibleCount} stocks`);
+
+            if (searchValue !== "" || currentCategory !== "") {
+                $paginationLinks.find("div:last-child").hide();
+            } else {
+                $paginationLinks.find("div:last-child").show();
+            }
         }
     }
 });

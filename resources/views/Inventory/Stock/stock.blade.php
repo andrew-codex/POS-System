@@ -20,11 +20,9 @@
     </div>
 
     <div class="table-header">
-
         <div class="search-bar">
             <input type="text" id="searchInput" class="form-control" placeholder="Search stock..."
                 value="{{ request('search') ?? '' }}">
-
 
             <div class="filter-bar">
                 <select id="categoryFilter">
@@ -38,7 +36,8 @@
     </div>
 
     <div class="stock-container">
-        <table class="stock-table data-table">
+        {{-- Always render the table (hide with JS if needed) --}}
+        <table class="stock-table data-table" style="display: {{ $stocks->isEmpty() ? 'none' : 'table' }};">
             <thead>
                 <tr>
                     <th>Product Name</th>
@@ -52,7 +51,9 @@
                 <tr data-category="{{ $stock->product?->category_id }}">
                     <td>{{ $stock->product->product_name }}</td>
                     <td>{{ $stock->product->category->category_name }}</td>
-                   <td><span class="{{ $stock->quantity < 10 ? 'stock-low' : 'stock-normal' }}">{{ $stock->quantity }}</span></td>
+                    <td><span
+                            class="{{ $stock->quantity < 10 ? 'stock-low' : 'stock-normal' }}">{{ $stock->quantity }}</span>
+                    </td>
                     <td>
                         <a href="{{ route('stock.edit', $stock->id) }}" class="btn-edit" role="button">
                             <i class="bi bi-pencil"></i>Edit
@@ -68,27 +69,24 @@
             </tbody>
         </table>
 
-
-        <div id="emptyState" class="empty-state">
+        <div id="emptyState" class="empty-state" style="display: {{ $stocks->isEmpty() ? 'block' : 'none' }};">
+            <i class="bi bi-box-seam" style="font-size: 48px; color: #6c757d;"></i>
             <p class="empty-state-text">No stocks found.</p>
         </div>
     </div>
 
     <div class="pagination-links">
         <div class="result-links">
-
             @if($stocks->total() > 0)
             <span id="resultCount">
                 Showing {{ $stocks->firstItem() }} to {{ $stocks->lastItem() }} of {{ $stocks->total() }} stocks
             </span>
             @else
-
             <span id="resultCount" style="display: none;"></span>
             @endif
         </div>
 
-
-        @if($stocks->hasPages())
+        @if(!$stocks->isEmpty() && $stocks->hasPages())
         <div>
             {{ $stocks->appends(request()->query())->links('pagination::simple-bootstrap-5') }}
         </div>

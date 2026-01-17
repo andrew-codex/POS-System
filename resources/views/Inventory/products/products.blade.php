@@ -97,25 +97,24 @@
 </div>
 
 
-    <div class="pagination-links">
-        <div class="result-links">
-
-            @if(!$products->isEmpty())
-            <span id="resultCount">
-                Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }} products
-            </span>
-            @else
-
-            <span id="resultCount" style="display: none;"></span>
-            @endif
-        </div>
-
-        @if($products->hasPages())
-        <div>
-            {{ $products->appends(request()->query())->links('pagination::simple-bootstrap-5') }}
-        </div>
+<div class="pagination-links">
+    <div class="result-links">
+        @if(!$products->isEmpty())
+        <span id="resultCount">
+            Showing {{ $products->firstItem() }} to {{ $products->lastItem() }} of {{ $products->total() }} products
+        </span>
+        @else
+        <span id="resultCount" style="display: none;"></span>
         @endif
     </div>
+
+  
+    @if(!$products->isEmpty() && $products->hasPages())
+    <div>
+        {{ $products->appends(request()->query())->links('pagination::simple-bootstrap-5') }}
+    </div>
+    @endif
+</div>
 </div>
 
 @endsection
