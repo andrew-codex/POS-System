@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <button class="btn-complete" id="open-payment">Complete Sale</button>
+        <button class="btn-complete" id="open-payment">Pay</button>
 
 
     </div>

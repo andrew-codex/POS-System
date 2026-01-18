@@ -175,14 +175,15 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(4px);
-    z-index: 9999;
+    /* subtle dark dim so underlying content remains visible */
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 1030;
     display: none;
     justify-content: center;
     align-items: center;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
 }
 
 .content-loading-overlay.show {
@@ -194,10 +195,11 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 60px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    /* show only the spinner — no white card */
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 #pageContentWrapper {
