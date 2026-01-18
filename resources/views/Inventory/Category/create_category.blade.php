@@ -34,7 +34,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-primary" onclick="confirmCreate('create-category-form')"> <i class="bi bi-plus"></i> Create Category</button>
+                <button type="button" id="createCategoryButton" class="btn-primary" onclick="confirmCreate('create-category-form')"> <i class="bi bi-plus"></i> Create Category</button>
             </div>
         </form>
     </div>

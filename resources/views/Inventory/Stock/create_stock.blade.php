@@ -49,7 +49,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-primary" onclick="confirmCreate('create-stock-form')">Create
+                <button type="button" id="createStockButton" class="btn-primary" onclick="confirmCreate('create-stock-form')"><i class="bi bi-plus"></i> Create
                     Stock</button>
             </div>
         </form>

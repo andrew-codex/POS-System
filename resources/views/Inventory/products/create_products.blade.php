@@ -55,7 +55,7 @@
             
             <div class="form-actions">
                 
-                <button type="button" class="btn-primary" onclick="confirmCreate('create-product-form')">
+                <button type="button" class="btn-primary" onclick="confirmCreate('create-product-form')" id="createProductButton">
                     <i class="bi bi-plus-circle"></i> Create Product
                 </button>
             </div>

@@ -144,7 +144,16 @@
     box-shadow: 0 4px 6px rgba(78, 115, 223, 0.25);
 }
 
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
+.btn-primary .spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
 
 .required {
     color: #ef4444;

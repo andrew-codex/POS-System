@@ -1,4 +1,4 @@
-/* Container & Layout */
+
 .content {
     padding: 2rem;
     width: 100%; 
@@ -23,7 +23,6 @@
     letter-spacing: -0.025em;
 }
 
-/* Back Button Styling */
 .btn-secondary {
     display: flex;
     align-items: center;
@@ -45,7 +44,7 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* Form Container Card - Full Width */
+
 .form-container {
     background-color: #ffffff;
     padding: 2.5rem;
@@ -56,7 +55,7 @@
     box-sizing: border-box;
 }
 
-/* 2-Column Grid Implementation */
+
 #create-category-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -64,8 +63,7 @@
     row-gap: 0.5rem;
 }
 
-/* Make both fields and actions span the full width if you prefer them stacked, 
-   OR leave as is for side-by-side Name and Description */
+
 .form-actions {
     grid-column: span 2;
     margin-top: 2rem;
@@ -86,7 +84,7 @@
     color: #ef4444;
 }
 
-/* Modern Input Styling */
+
 .form-group input {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -106,7 +104,7 @@
     box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.1);
 }
 
-/* Create Button */
+
 .form-actions .btn-primary {
     display: inline-flex;
     align-items: center;
@@ -129,6 +127,16 @@
     box-shadow: 0 8px 20px rgba(78, 115, 223, 0.45);
 }
 
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary .spinner-border {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
 
 @media (max-width: 768px) {
     #create-category-form {
