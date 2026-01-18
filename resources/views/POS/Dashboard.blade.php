@@ -12,7 +12,7 @@
 </style>
 <div class="container-fluid p-2">
     <h2 class="fw-bold">Dashboard</h2>
-    <p class="text-muted">Welcome back! Here's your store overview</p>
+    <p class="text-muted">Welcome back!  <span class="fw-bold">{{ Auth::user()->name }}</span></p>
 
     <div class="row g-3">
 

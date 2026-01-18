@@ -7,10 +7,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
             integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
             crossorigin="anonymous"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/loading-spinner.css') }}">
     <title>POS Login</title>
 </head>
 
@@ -43,17 +44,17 @@
                     <p>Sign in to your admin account</p>
                 </div>
 
-                <form action="{{ route('auth.login.submit') }}" method="POST">
+                <form action="{{ route('auth.login.submit') }}" method="POST" id="loginForm">
                     @csrf
-                  <div class="form-group">
-                    <label for="email">Email <span class="required">*</span></label>
-                    <input type="email" id="email" name="email" placeholder="admin@company.com" value="{{ old('email') }}" required>
-                </div>
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="admin@company.com" value="{{ old('email') }}" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="password">Password <span class="required">*</span></label>
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
-                </div>
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    </div>
 
                     <div class="form-footer">
                         <label class="checkbox-container">
@@ -71,27 +72,42 @@
             </footer>
         </div>
     </div>
+
+ 
+    <div id="loadingSpinner" class="loading-overlay" style="display: none;">
+        <x-loading-spinner size="lg" text="Signing you in..." />
+    </div>
+
     <script>
-    toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        positionClass: 'toast-top-right',
-        timeOut: '5000'
-    };
+        
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            document.getElementById('loadingSpinner').style.display = 'flex';
+        });
 
-    @if(session('success'))
-    toastr.success(@json(session('success')));
-    @endif
+        toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: 'toast-top-right',
+            timeOut: '5000'
+        };
 
-    @if(session('error'))
-    toastr.error(@json(session('error')));
-    @endif
+        @if(session('success'))
+        toastr.success(@json(session('success')));
+        @endif
 
-    @if($errors->any())
-    @foreach($errors->all() as $error)
-    toastr.error(@json($error));
-    @endforeach
-    @endif
+        @if(session('error'))
+        toastr.error(@json(session('error')));
+      
+        document.getElementById('loadingSpinner').style.display = 'none';
+        @endif
+
+        @if($errors->any())
+        @foreach($errors->all() as $error)
+        toastr.error(@json($error));
+        @endforeach
+     
+        document.getElementById('loadingSpinner').style.display = 'none';
+        @endif
     </script>
 </body>
 
