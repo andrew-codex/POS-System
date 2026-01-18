@@ -183,6 +183,8 @@ $(document).on('click', '.product-card', function () {
         $('#payment-amount').val('');
         $('#payment-change').text("₱0.00");
         $('#confirm-payment').prop('disabled', true);
+        // Ensure modal/backdrop are appended to <body> so they render above page overlays
+        $('#paymentModal').appendTo('body');
         $('#paymentModal').modal('show');
     });
 
