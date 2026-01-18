@@ -28,8 +28,17 @@
         </div>
     </nav>
 
-    <div id="content">
-        @yield('content')
+    <div id="content" style="position: relative;">
+        <div id="contentLoadingOverlay" class="content-loading-overlay">
+            <div class="loading-container">
+                <x-loading-spinner size="lg" text="Loading..." />
+            </div>
+        </div>
+
+     
+        <div id="pageContentWrapper">
+            @yield('content')
+        </div>
     </div>
 
     <script>
@@ -42,7 +51,6 @@
                 $('.collapse').collapse('hide');
             }
         }
-        
     </script>
     @stack('scripts')
 </body>
