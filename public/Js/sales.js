@@ -47,7 +47,7 @@ $(document).ready(function () {
 
         emptyState.hide();
         tbody.closest("table").show();
-        paginationInfo.hide();
+        paginationInfo.show();
 
         sales.forEach(function (sale) {
             const date = new Date(sale.created_at);
@@ -55,9 +55,6 @@ $(document).ready(function () {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
             });
 
             const statusBadge = getStatusBadge(sale.status);
@@ -67,20 +64,20 @@ $(document).ready(function () {
             );
 
             const row = `
-                <tr>
-                    <td>${sale.invoice_no}</td>
-                    <td>${formattedDate}</td>
-                    <td>${sale.items_count || 0}</td>
-                    <td>${sale.cashier ? sale.cashier.name : "N/A"}</td>
-                    <td>₱${parseFloat(sale.total_amount).toFixed(2)}</td>
-                    <td class="badge-status">${statusBadge}</td>
-                    <td>
-                        <a href="${refundUrl}" class="btn btn-sm btn-primary">
-                            View Refunds
-                        </a>
-                    </td>
-                </tr>
-            `;
+            <tr>
+                <td class="fw-bold text-slate">${sale.invoice_no}</td>
+                <td>${formattedDate}</td>
+                <td>${sale.items_count || 0}</td>
+                <td>${sale.cashier ? sale.cashier.name : "N/A"}</td>
+                <td class="fw-bold">₱${parseFloat(sale.total_amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <a href="${refundUrl}" class="btn-action">
+                        <i class="bi bi-eye"></i> Refund
+                    </a>
+                </td>
+            </tr>
+        `;
 
             tbody.append(row);
         });
@@ -88,13 +85,17 @@ $(document).ready(function () {
 
     function getStatusBadge(status) {
         const badges = {
-            completed: '<span class="badge-completed">Completed</span>',
-            pending: '<span class="badge-pending">Pending</span>',
-            canceled: '<span class="badge-canceled">Canceled</span>',
-            exchanged: '<span class="badge-exchanged">Exchanged</span>',
-            refunded: '<span class="badge-refunded">Refunded</span>',
+            completed:
+                '<span class="badge-status status-completed">Completed</span>',
+            pending: '<span class="badge-status status-pending">Pending</span>',
+            canceled:
+                '<span class="badge-status status-canceled">Canceled</span>',
+            exchanged:
+                '<span class="badge-status status-exchanged">Exchanged</span>',
+            refunded:
+                '<span class="badge-status status-refunded">Refunded</span>',
             partially_refunded:
-                '<span class="badge-partially-refunded">Partially Refunded</span>',
+                '<span class="badge-status status-partially">Partially Refunded</span>',
         };
         return (
             badges[status] ||

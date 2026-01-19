@@ -3,9 +3,12 @@
 @section('title', 'Refunds')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('/css/POS/refund.css') }}">
 <div class="container">
     <div class="header d-flex align-items-center mb-4">
-        <a href="{{ route('pos.sales') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i></a>
+        <a href="{{ route('pos.sales') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i>
+        </a>
         <h2 class="ms-3">Sales Refund Management</h2>
     </div>
 
@@ -75,10 +78,12 @@
                                 <td class="refund-amount fw-bold text-primary">₱0.00</td>
                                 <td>
                                     <input type="checkbox" name="items[{{ $item->id }}][is_expired]" value="1"
-                                        @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif></td>
+                                        @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif>
+                                </td>
                                 <td>
                                     <input type="checkbox" name="items[{{ $item->id }}][is_damaged]" value="1"
-                                        @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif></td>
+                                        @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif>
+                                </td>
                                 <td>
                                     <input type="checkbox" class="is-changed" name="items[{{ $item->id }}][is_changed]"
                                         value="1" @if(in_array($item->product_id, $alreadyProcessed)) disabled @endif>
@@ -183,12 +188,15 @@
                         <td>{{ $item->is_damaged ? 'Yes' : 'No' }}</td>
                         <td>{{ $item->is_changed ? 'Yes' : 'No' }}</td>
                         <td>
+                            <span class="badge-status status-pending" style="font-size: 0.7rem;">Already
+                                Processed</span>
+
                             @if($item->is_changed)
-                            <span class="badge bg-info text-dark">Exchanged</span>
+                            <span class="badge-status status-exchanged">Exchanged</span>
                             @elseif($item->is_expired || $item->is_damaged)
-                            <span class="badge bg-warning text-dark">Returned</span>
+                            <span class="badge-status status-canceled">Returned</span>
                             @else
-                            <span class="badge bg-success">Refunded</span>
+                            <span class="badge-status status-completed">Refunded</span>
                             @endif
                         </td>
                         <td>{{ $item->newProduct->product_name ?? '-' }}</td>
