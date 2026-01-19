@@ -78,6 +78,14 @@ class ProductsController extends Controller
             'initial_stock' => 'nullable|integer|min:0',
         ]);
 
+        $existingProduct = Products::where('product_barcode', $validated['product_barcode'])
+            ->first();
+        if ($existingProduct) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Product with the same barcode already exists.');
+        }
+
         try {
             $this->productService->createProduct($validated);
 
@@ -112,6 +120,16 @@ class ProductsController extends Controller
         ]);
 
         $product = Products::findOrFail($id);
+        
+        $existingProduct = Products::where('product_barcode', $validatedData['product_barcode'])
+            ->where('id', '!=', $id)
+            ->first();
+        if ($existingProduct) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Another product with the same barcode already exists.');
+        }
+
         $product->update($validatedData);
 
         $this->logActivity("Updated Product", [
