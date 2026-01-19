@@ -71,7 +71,7 @@
 }
 
 
-.form-group:nth-child(3), 
+.form-group:nth-child(4), 
 .form-actions {
     grid-column: span 2;
 }

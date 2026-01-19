@@ -36,7 +36,7 @@
     </div>
 
     <div class="stock-container">
-        {{-- Always render the table (hide with JS if needed) --}}
+    
         <table class="stock-table data-table" style="display: {{ $stocks->isEmpty() ? 'none' : 'table' }};">
             <thead>
                 <tr>
@@ -49,8 +49,8 @@
             <tbody>
                 @foreach($stocks as $stock)
                 <tr data-category="{{ $stock->product?->category_id }}">
-                    <td>{{ $stock->product->product_name }}</td>
-                    <td>{{ $stock->product->category->category_name }}</td>
+                    <td>{{ $stock->product->product_name ?? '' }}</td>
+                    <td>{{ $stock->product->category->category_name ?? '' }}</td>
                     <td><span
                             class="{{ $stock->quantity < 10 ? 'stock-low' : 'stock-normal' }}">{{ $stock->quantity }}</span>
                     </td>
@@ -60,7 +60,7 @@
                         </a>
 
                         <a class="btn-add-stock"
-                            href="{{ route('stock.create', ['product_id' => $stock->product->id]) }}">
+                            href="{{ route('stock.create', ['product_id'  => $stock->product->id]) }}">
                             <i class="bi bi-plus"></i> Add Stock
                         </a>
                     </td>
@@ -70,7 +70,7 @@
         </table>
 
         <div id="emptyState" class="empty-state" style="display: {{ $stocks->isEmpty() ? 'block' : 'none' }};">
-            <i class="bi bi-box-seam" style="font-size: 48px; color: #6c757d;"></i>
+            <i class="bi bi-box-seam"></i>
             <p class="empty-state-text">No stocks found.</p>
         </div>
     </div>

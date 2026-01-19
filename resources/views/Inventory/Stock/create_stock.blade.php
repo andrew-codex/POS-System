@@ -4,7 +4,7 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('/css/Inventory/create_stock.css') }}">
-<script src="{{ asset('/js/create_stock.js') }}"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <div class="content">
     <div class="header">
@@ -34,8 +34,8 @@
 
                 @else
 
-                <select name="product_id" class="form-group" required>
-                    <option value="">Select a product</option>
+                <select name="product_id" id="product_id" class="form-control" required>
+                    <option value="" disabled selected>Select a product</option>
                     @foreach ($products as $product)
                     <option value="{{ $product->id }}">{{ $product->product_name }}</option>
                     @endforeach
@@ -49,12 +49,17 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" id="createStockButton" class="btn-primary" onclick="confirmCreate('create-stock-form')"><i class="bi bi-plus"></i> Create
-                    Stock</button>
+                <button type="button" id="createStockButton" class="btn-primary"
+                    onclick="confirmCreate('create-stock-form')">
+                    <i class="bi bi-plus"></i> Create Stock
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{{ asset('/js/create_stock.js') }}"></script>
 @endsection

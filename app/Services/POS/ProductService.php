@@ -4,6 +4,7 @@ namespace App\Services\POS;
 use App\Models\Products;
 use App\Models\Stocks;
 use App\Models\ActivityLog;
+use App\Models\Stock_logs;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -66,7 +67,28 @@ class ProductService
             "quantity" => (int)$quantity,
         ]);
 
+        $this->logStockAddition($productId, (int)$quantity, 'Initial stock set during product creation.');
+
         return $stock;
+    }
+
+    private function logStockAddition(int $productId, int $quantity, ?string $remarks = null): Stock_logs
+    {
+        $log = Stock_logs::create([
+            'product_id' => $productId,
+            'type' => 'in',
+            'quantity' => $quantity,
+            'remarks' => 'stock added. ' . ($remarks ?? ''),
+            'user_id' => auth()->id(),
+        ]);
+
+        $this->logActivity("Stock Added", [
+            "product_id" => $productId,
+            "quantity" => $quantity,
+            "remarks" => $remarks,
+        ]);
+
+        return $log;
     }
 
     /**

@@ -193,9 +193,10 @@ tr:hover {
     display: none;
     text-align: center;
     padding: 60px 20px;
-    background: #f8f9fa;
     border-radius: 8px;
     margin: 20px 0;
+    font-size: 48px; 
+    color: #6c757d;
 }
 
 .empty-state-text {

@@ -108,7 +108,7 @@ class ProductsController extends Controller
             'product_description' => 'nullable|string',
             'product_price' => 'required|numeric',
             'product_barcode' => 'nullable|string|max:100',
-            'category_id' => 'nullable|string|max:100',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $product = Products::findOrFail($id);
@@ -130,7 +130,7 @@ class ProductsController extends Controller
 
         $hasRefunds = $product->refunds()->exists();
         $hasSaleItems = SaleItem::where('product_id', $id)->exists();
-        $hasStock = Stocks::where('product_id', $id)->exists();
+        $hasStock = Stocks::where('product_id', $id)->where('quantity', '>', 0)->exists();
 
         if ($hasRefunds || $hasSaleItems || $hasStock) {
             $this->logActivity('Failed Delete Product', [

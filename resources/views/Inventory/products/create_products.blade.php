@@ -27,6 +27,10 @@
                 <input type="text" name="product_name" required>
             </div>
 
+              <div class="form-group">
+                <label for="initial_stock">Initial Stock <span class="required">*</span></label>
+                <input type="number" name="initial_stock" required>
+            </div>
 
             <div class="form-group">
                 <label for="product_description">Description <span class="required">*</span></label>
@@ -46,7 +50,7 @@
             <div class="form-group">
                 <label for="category_id">Category <span class="required">*</span></label>
                 <select name="category_id" required>
-                    <option value="" disabled selected>-- Select Category --</option>
+                    <option value="" disabled selected> Select Category </option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}">{{ $category->category_name }}</option>
                     @endforeach

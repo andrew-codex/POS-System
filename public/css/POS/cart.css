@@ -102,7 +102,6 @@
     background: #e5e7eb;
 }
 
-/* Products Grid */
 .products-grid {
     flex: 1;
     overflow-y: auto;
@@ -112,7 +111,6 @@
     padding-right: 8px;
 }
 
-/* Custom Scrollbar */
 .products-grid::-webkit-scrollbar,
 #cart-items::-webkit-scrollbar {
     width: 6px;
@@ -135,7 +133,6 @@
     background: #a8a8a8;
 }
 
-/* Product Card */
 .product-card {
     background: white;
     border: 1px solid #e5e7eb;
@@ -199,14 +196,12 @@
     font-weight: 500;
 }
 
-/* Hidden Barcode Input */
 .barcode-input-hidden {
     opacity: 0;
     position: absolute;
     pointer-events: none;
 }
 
-/* Cart Section */
 .cart-content {
     width: 420px;
     flex-shrink: 0;
@@ -227,7 +222,6 @@
     color: #1a1a1a;
 }
 
-/* Cart Items */
 #cart-items {
     flex: 1;
     overflow-y: auto;
@@ -236,7 +230,7 @@
 }
 
 #cart-items:empty::before {
-    content: 'No items in cart';
+    content: "No items in cart";
     display: block;
     text-align: center;
     color: #9ca3af;
@@ -276,7 +270,6 @@
     font-size: 13px;
 }
 
-/* Quantity Controls */
 .qty-controls {
     display: flex;
     align-items: center;
@@ -320,7 +313,6 @@
     border-color: #5e8bff;
 }
 
-/* Totals */
 .totals {
     border-top: 2px solid #f3f4f6;
     padding-top: 16px;
@@ -346,7 +338,6 @@
     margin-top: 8px;
 }
 
-/* Complete Sale Button */
 .btn-complete {
     margin-top: 16px;
     width: 100%;
@@ -372,7 +363,6 @@
     transform: translateY(0);
 }
 
-/* Modal Improvements */
 .modal-content {
     border-radius: 12px;
     border: none;
@@ -423,7 +413,6 @@
     margin: 8px 0 0 0;
 }
 
-/* Denomination Buttons */
 .denoms {
     display: flex;
     gap: 8px;
@@ -458,17 +447,34 @@
     font-weight: 600;
 }
 
-/* Responsive Design */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #9ca3af;
+    font-size: 14px;
+
+}
+
+.empty-state i {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.empty-state h4 {
+    margin-bottom: 8px;
+}
+
 @media (max-width: 1200px) {
     .sale-content {
         flex-direction: column;
         height: auto;
     }
-    
+
     .product-content {
         height: 500px;
     }
-    
+
     .cart-content {
         width: 100%;
         height: 400px;
@@ -480,11 +486,11 @@
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 12px;
     }
-    
+
     .filters-row {
         flex-direction: column;
     }
-    
+
     .filters-row input[type="search"],
     .filters-row select {
         width: 100%;

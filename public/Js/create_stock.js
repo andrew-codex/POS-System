@@ -1,10 +1,9 @@
 function confirmCreate(formId) {
     const form = document.getElementById(formId);
-    const submitButton = document.getElementById('createStockButton');
+    const submitButton = document.getElementById("createStockButton");
 
- 
     if (!form.checkValidity()) {
-        form.reportValidity(); 
+        form.reportValidity();
         return;
     }
 
@@ -18,11 +17,28 @@ function confirmCreate(formId) {
         showLoaderOnConfirm: true,
         preConfirm: () => {
             submitButton.disabled = true;
-            submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
-            
-         
+            submitButton.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+
             form.submit();
         },
-        allowOutsideClick: () => !Swal.isLoading()
+        allowOutsideClick: () => !Swal.isLoading(),
     });
 }
+
+$(document).ready(function () {
+    $("#product_id").select2({
+        placeholder: "Select a product",
+        allowClear: true,
+        width: "100%",
+        dropdownAutoWidth: true,
+    });
+
+    $(window).on("resize", function () {
+        $("#product_id").each(function () {
+            $(this).select2({
+                width: "100%",
+            });
+        });
+    });
+});

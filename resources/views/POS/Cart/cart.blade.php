@@ -16,75 +16,83 @@
         <p class="subtitle">Select products or scan barcodes to add to cart</p>
 
 
-        <form method="GET" id="filters-form">
-            <div class="filters-row">
+        <div class="filters-row">
 
-                <input type="search" name="search" class="filter-input" placeholder="Search products..."
-                    value="{{ request('search') }}">
-                <select name="category" id="category-select" class="filter-input">
-                    <option value="">All Categories</option>
-                    @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                        {{ $category->category_name }}
-                    </option>
-                    @endforeach
-                </select>
-                <button class="btn btn-primary" type="submit">Search</button>
-                @if(request('search'))
-                <a href="{{ route('pos.cart') }}" class="btn btn-secondary">Clear</a>
-                @endif
-            </div>
-        </form>
+            <input type="search" id="search-input" class="filter-input" placeholder="Search products..."
+                autocomplete="off">
+
+            <select name="category" id="category-select" class="filter-input">
+                <option value="">All Categories</option>
+                @foreach($categories as $category)
+                <option value="{{ $category->id }}">
+                    {{ $category->category_name }}
+                </option>
+                @endforeach
+            </select>
+        </div>
 
 
-        <div class="products-grid">
+        @if($filteredProducts->isEmpty())
+        <div id="empty-state" class="empty-state">
+            <i class="bi bi-box-seam"></i>
+            <h4>No products available</h4>
+            <p>Add products to your inventory to get started</p>
+        </div>
+        @else
+        <div class="products-grid" id="products-grid">
             @foreach($filteredProducts as $product)
             @php
-                $stockQuantity = $product->stock?->quantity ?? 0;
-                $isOutOfStock = $stockQuantity <= 0;
-            @endphp
-            <div class="product-card {{ $isOutOfStock ? 'product-card-disabled' : '' }}" data-id="{{ $product->id }}" data-name="{{ $product->product_name }}"
-                data-price="{{ $product->product_price }}" data-description="{{ $product->product_description }}"
-                data-stock="{{ $stockQuantity }}">
+            $stockQuantity = $product->stock?->quantity ?? 0;
+            $isOutOfStock = $stockQuantity <= 0; @endphp <div
+                class="product-card {{ $isOutOfStock ? 'product-card-disabled' : '' }}" data-id="{{ $product->id }}"
+                data-name="{{ $product->product_name }}" data-price="{{ $product->product_price }}"
+                data-description="{{ $product->product_description }}" data-stock="{{ $stockQuantity }}"
+                data-category="{{ $product->category_id }}">
 
-                    <h4>{{ $product->product_name }}</h4>
-                    <small>{{ $product->product_description }}</small>
-                    <p>₱{{ number_format($product->product_price, 2) }}</p>
-                    @if($stockQuantity > 10)
-                    <small class="text-success">Stock: {{ $stockQuantity }}</small>
-                    @elseif($stockQuantity > 0 && $stockQuantity <= 10)
-                    <small class="text-warning">Low Stock: {{ $stockQuantity }}</small>
+                <h4>{{ $product->product_name }}</h4>
+                <small>{{ $product->product_description }}</small>
+                <p>₱{{ number_format($product->product_price, 2) }}</p>
+                @if($stockQuantity > 10)
+                <small class="text-success">Stock: {{ $stockQuantity }}</small>
+                @elseif($stockQuantity > 0 && $stockQuantity <= 10) <small class="text-warning">Low Stock:
+                    {{ $stockQuantity }}</small>
                     @else
                     <small class="text-danger">Out of Stock</small>
                     @endif
-            </div>
-            @endforeach
         </div>
-
+        @endforeach
     </div>
 
-
-    <div class="cart-content">
-
-        <h3 class="cart-title">Cart</h3>
-
-        <div id="cart-items"></div>
-
-        <div class="totals">
-            <div class="row">
-                <span>Subtotal</span>
-                <span id="subtotal">₱0.00</span>
-            </div>
-            <div class="total-row">
-                <span>Total</span>
-                <span id="total">₱0.00</span>
-            </div>
-        </div>
-
-        <button class="btn-complete" id="open-payment">Pay</button>
-
-
+    <div id="empty-state" class="empty-state" style="display: none;">
+        <i class="bi bi-search"></i>
+        <h4>No products found</h4>
     </div>
+    @endif
+
+</div>
+
+
+<div class="cart-content">
+
+    <h3 class="cart-title">Cart</h3>
+
+    <div id="cart-items"></div>
+
+    <div class="totals" id="cart-totals">
+        <div class="row">
+            <span>Subtotal</span>
+            <span id="subtotal">₱0.00</span>
+        </div>
+        <div class="total-row">
+            <span>Total</span>
+            <span id="total">₱0.00</span>
+        </div>
+    </div>
+
+    <button class="btn-complete" id="open-payment">Pay</button>
+
+
+</div>
 
 </div>
 
@@ -144,10 +152,11 @@
         </div>
     </div>
 </div>
+
 <script>
 window.saleSuccess = @json(session('success') ?? '');
 </script>
 
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ asset('/Js/cart.js') }}"></script>
 @endsection
