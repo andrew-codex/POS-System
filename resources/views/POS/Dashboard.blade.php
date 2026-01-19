@@ -3,16 +3,13 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<style>
-.hover-scale:hover {
-    transform: scale(1.05);
-    transition: transform 0.4s ease-in-out;
-    cursor: pointer;
-}
-</style>
+
+
+<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+
 <div class="container-fluid p-2">
     <h2 class="fw-bold">Dashboard</h2>
-    <p class="text-muted">Welcome back!  <span class="fw-bold">{{ Auth::user()->name }}</span></p>
+    <p class="text-muted">Welcome back! <span class="fw-bold">{{ Auth::user()->name }}</span></p>
 
     <div class="row g-3">
 
@@ -52,18 +49,18 @@
 
     <div class="row mt-4 g-3">
 
- 
-    <div class="col-lg-8">
-        <div class="card shadow-sm p-3 mb-4">
-            <h5 class="fw-bold mb-3">Top Selling Product Sales Over Time</h5>
 
-            @if(count($dates) > 0)
+        <div class="col-lg-8">
+            <div class="card shadow-sm p-3 mb-4">
+                <h5 class="fw-bold mb-3">Top Selling Product Sales Over Time</h5>
+
+                @if(count($dates) > 0)
                 <canvas id="topSellingLineChart" height="120"></canvas>
-            @else
+                @else
                 <p class="text-center text-muted">No sales data available.</p>
-            @endif
+                @endif
+            </div>
         </div>
-    </div>
 
 
         <div class="col-lg-4">
@@ -71,22 +68,23 @@
             <div class="card shadow-sm p-4 mb-3">
                 <h5 class="fw-bold pb-2">Low Stock Alerts</h5>
 
-                @if($lowStockItems->isEmpty())
-                <div class="bg-light p-3 rounded text-left">
-                    <strong class="text-success"><i class="bi bi-check-circle"></i> No low stock items</strong> <br>
-                    <small class="text-muted">All products are sufficiently stocked.</small>
-                </div>
-                @else
-                @foreach($lowStockItems as $item)
-                <div class="p-2 rounded mb-3" style="background:#fef7e7; border:1px solid #f5e6c5;">
-                    <strong class="text-muted">{{ $item->product->product_name }}</strong>
-                    <div>
-                        <small class="text-muted">{{ $item->quantity }} left in stock</small>
+                <div class="low-stock-container">
+                    @if($lowStockItems->isEmpty())
+                    <div class="bg-light p-3 rounded text-left">
+                        <strong class="text-success"><i class="bi bi-check-circle"></i> No low stock items</strong> <br>
+                        <small class="text-muted">All products are sufficiently stocked.</small>
                     </div>
-
+                    @else
+                    @foreach($lowStockItems as $item)
+                    <div class="p-2 rounded mb-3" style="background:#fef7e7; border:1px solid #f5e6c5;">
+                        <strong class="text-muted">{{ $item->product->product_name }}</strong>
+                        <div>
+                            <small class="text-muted">{{ $item->quantity }} left in stock</small>
+                        </div>
+                    </div>
+                    @endforeach
+                    @endif
                 </div>
-                @endforeach
-                @endif
             </div>
 
 
@@ -107,9 +105,13 @@
 </div>
 
 <script>
-  @if(count($dates) > 0)
-const saleDates = {!! json_encode($dates) !!};
-const topSalesQuantity = {!! json_encode($quantities) !!};
+@if(count($dates) > 0)
+const saleDates = {
+    !!json_encode($dates) !!
+};
+const topSalesQuantity = {
+    !!json_encode($quantities) !!
+};
 const topProductName = "{{ $productName }}";
 
 new Chart(document.getElementById('topSellingLineChart'), {
@@ -131,10 +133,14 @@ new Chart(document.getElementById('topSellingLineChart'), {
     options: {
         responsive: true,
         scales: {
-            y: { beginAtZero: true }
+            y: {
+                beginAtZero: true
+            }
         },
         plugins: {
-            legend: { display: true }
+            legend: {
+                display: true
+            }
         }
     }
 });

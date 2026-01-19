@@ -1,0 +1,32 @@
+.hover-scale{
+    transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.low-stock-container {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.low-stock-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.low-stock-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.low-stock-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.low-stock-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
