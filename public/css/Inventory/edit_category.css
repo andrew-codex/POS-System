@@ -134,6 +134,18 @@
     box-shadow: 0 8px 20px rgba(78, 115, 223, 0.45);
 }
 
+.btn-primary:disabled {
+    background: #a3bffa;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-primary:disabled:hover {
+    background: #a3bffa;
+    transform: none;
+    box-shadow: none;
+}
 
 @media (max-width: 768px) {
     #edit-category-form {

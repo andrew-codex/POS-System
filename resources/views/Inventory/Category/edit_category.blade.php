@@ -34,7 +34,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" class="btn-primary" onclick="confirmEditCategory('edit-category-form')">Update Category</button>
+                <button type="button" class="btn-primary" id="submitButton" onclick="confirmEditCategory('edit-category-form')">Update Category</button>
             </div>
         </form>
     </div>

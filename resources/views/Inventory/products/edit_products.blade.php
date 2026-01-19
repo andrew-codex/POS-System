@@ -52,7 +52,7 @@
                     </select>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-primary" onclick="confirmEdit('edit-form')">Update Product</button>
+                    <button type="button" id="submitButton" class="btn-primary" onclick="confirmEdit('edit-form')">Update Product</button>
                 </div>
             </form>
        
