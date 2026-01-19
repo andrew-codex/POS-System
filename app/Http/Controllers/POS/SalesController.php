@@ -21,37 +21,58 @@ class SalesController extends Controller
 
     public function index(Request $request)
     {
+        $sales = Sales::select('id', 'invoice_no', 'created_at', 'created_by', 'total_amount', 'status')
+            ->with(['cashier:id,name', 'items:id,sale_id'])
+            ->withCount('items')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('POS.Sales.sales', compact('sales'));
+    }
+
+    public function search(Request $request)
+    {
         $search = $request->input('search');
         $status = $request->input('status');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $query = Sales::with('cashier');
+        $query = Sales::select('id', 'invoice_no', 'created_at', 'created_by', 'total_amount', 'status')
+            ->with(['cashier:id,name', 'items:id,sale_id'])
+            ->withCount('items');
 
-        if ($status) {
+        if (!empty($status)) {
             $query->where('status', $status);
         }
-
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+      
+        if (!empty($startDate) && !empty($endDate)) {
+            $query->whereBetween('created_at', [
+                $startDate . ' 00:00:00',
+                $endDate . ' 23:59:59'
+            ]);
+        } elseif (!empty($startDate)) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif (!empty($endDate)) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
 
         if (!empty($search)) {
-            $escapedSearch = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
-            $likePattern = '%' . $escapedSearch . '%';
-
-            $query->where(function ($q) use ($likePattern) {
-                $q->where('id', 'like', $likePattern)
-                  ->orWhere('total_amount', 'like', $likePattern)
-                  ->orWhere('amount_received', 'like', $likePattern)
-                  ->orWhere('change_amount', 'like', $likePattern)
-                  ->orWhereHas('cashier', fn($q2) => $q2->where('name', 'like', $likePattern));
+            $escaped = addcslashes($search, '%_');
+            $query->where(function ($q) use ($escaped) {
+                $q->where('invoice_no', 'like', '%' . $escaped . '%')
+                  ->orWhere('total_amount', 'like', '%' . $escaped . '%')
+                  ->orWhereHas('cashier', function($q2) use ($escaped) {
+                      $q2->where('name', 'like', '%' . $escaped . '%');
+                  });
             });
         }
 
-        $sales = $query->orderBy('created_at', 'desc')->paginate(10);
+        $sales = $query->orderBy('created_at', 'desc')->limit(100)->get();
 
-        return view('POS.Sales.sales', compact('sales'));
+        return response()->json([
+            'sales' => $sales,
+            'count' => $sales->count()
+        ]);
     }
 
     public function store(Request $request)
