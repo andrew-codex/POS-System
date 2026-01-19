@@ -244,44 +244,101 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    function filterProducts() {
-        const searchTerm = $("#search-input").val().toLowerCase().trim();
+    let searchTimeout;
+
+    function fetchAndDisplayProducts() {
+        const searchTerm = $("#search-input").val().trim();
         const selectedCategory = $("#category-select").val();
-        let visibleCount = 0;
 
-        $(".product-card").each(function () {
-            const productName = $(this).data("name").toLowerCase();
-            const productDescription = $(this)
-                .data("description")
-                .toLowerCase();
-            const productCategory = $(this).data("category").toString();
-
-            const matchesSearch =
-                searchTerm === "" ||
-                productName.includes(searchTerm) ||
-                productDescription.includes(searchTerm);
-
-            const matchesCategory =
-                selectedCategory === "" || productCategory === selectedCategory;
-
-            if (matchesSearch && matchesCategory) {
-                $(this).show();
-                visibleCount++;
-            } else {
-                $(this).hide();
-            }
-        });
-
-        if (visibleCount === 0) {
-            $("#empty-state").show();
-            $("#products-grid").hide();
-        } else {
-            $("#empty-state").hide();
-            $("#products-grid").show();
-        }
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function () {
+            $.ajax({
+                url: "/api/products/search",
+                method: "GET",
+                data: {
+                    search: searchTerm,
+                    category: selectedCategory,
+                },
+                beforeSend: function () {
+                    $("#products-grid").css("opacity", "0.5");
+                },
+                success: function (response) {
+                    renderProducts(response.products);
+                },
+                complete: function () {
+                    $("#products-grid").css("opacity", "1");
+                },
+            });
+        }, 300);
     }
 
-    $("#search-input").on("input", filterProducts);
+    function renderProducts(products) {
+        const grid = $("#products-grid");
+        grid.empty();
 
-    $("#category-select").on("change", filterProducts);
+        if (products.length === 0) {
+            $("#empty-state").show();
+            grid.hide();
+            return;
+        }
+
+        $("#empty-state").hide();
+        grid.show();
+
+        products.forEach(function (product) {
+            const stockQty = product.stock ? product.stock.quantity : 0;
+            const isOutOfStock = stockQty <= 0;
+
+            let stockHtml = "";
+            if (stockQty > 10) {
+                stockHtml = `<small class="text-success">Stock: ${stockQty}</small>`;
+            } else if (stockQty > 0) {
+                stockHtml = `<small class="text-warning">Low Stock: ${stockQty}</small>`;
+            } else {
+                stockHtml = `<small class="text-danger">Out of Stock</small>`;
+            }
+
+            const card = `
+                <div class="product-card ${isOutOfStock ? "product-card-disabled" : ""}"
+                     data-id="${product.id}"
+                     data-name="${product.product_name}"
+                     data-price="${product.product_price}"
+                     data-description="${product.product_description || ""}"
+                     data-stock="${stockQty}"
+                     data-category="${product.category_id}">
+                    <h4>${product.product_name}</h4>
+                    <small>${product.product_description || ""}</small>
+                    <p>₱${parseFloat(product.product_price).toFixed(2)}</p>
+                    ${stockHtml}
+                </div>
+            `;
+
+            grid.append(card);
+        });
+
+        attachProductClickHandlers();
+    }
+
+    function attachProductClickHandlers() {
+        $(".product-card")
+            .off("click")
+            .on("click", function () {
+                if ($(this).hasClass("product-card-disabled")) return;
+
+                const productData = {
+                    id: $(this).data("id"),
+                    name: $(this).data("name"),
+                    price: $(this).data("price"),
+                    description: $(this).data("description"),
+                    stock: $(this).data("stock"),
+                };
+
+                addToCart(productData);
+            });
+    }
+
+    $("#search-input").on("input", fetchAndDisplayProducts);
+    $("#category-select").on("change", fetchAndDisplayProducts);
+
+    attachProductClickHandlers();
 });

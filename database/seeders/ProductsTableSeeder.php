@@ -16,7 +16,6 @@ class ProductsTableSeeder extends Seeder
         
         echo "Starting product generation...\n\n";
         
-        // Get existing categories or create some
         $categories = Category::all();
         
         if ($categories->isEmpty()) {
@@ -42,7 +41,6 @@ class ProductsTableSeeder extends Seeder
             echo "Created " . $categories->count() . " categories.\n\n";
         }
 
-        // Number of products to generate
         $totalProducts = 1000;
         
         echo "Generating {$totalProducts} products with stock...\n";
@@ -62,7 +60,6 @@ class ProductsTableSeeder extends Seeder
         ];
         
         for ($i = 1; $i <= $totalProducts; $i++) {
-            // Create product
             $baseName = $productNames[array_rand($productNames)];
             $productName = $baseName . ' ' . $faker->word() . ' #' . $i;
             
@@ -74,17 +71,14 @@ class ProductsTableSeeder extends Seeder
             
                 'product_barcode' => $faker->ean13(),
             ]);
-
-            // Create stock for the product
             $quantity = $faker->numberBetween(0, 150);
             
             Stocks::create([
                 'product_id' => $product->id,
                 'quantity' => $quantity,
-                // Add any other fields your stocks table has
             ]);
 
-            // Show progress every 100 products
+         
             if ($i % 100 == 0) {
                 $percentage = ($i / $totalProducts) * 100;
                 echo "Progress: {$i}/{$totalProducts} ({$percentage}%)\n";
@@ -97,7 +91,7 @@ class ProductsTableSeeder extends Seeder
         echo "✓ Total Products: " . Products::count() . "\n";
         echo "✓ Total Stocks: " . Stocks::count() . "\n";
         
-        // Show some statistics
+
         $lowStock = Stocks::where('quantity', '<', 10)->count();
         echo "✓ Low stock items (< 10): {$lowStock}\n";
         

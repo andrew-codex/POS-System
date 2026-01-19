@@ -74,6 +74,8 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+    Route::get('/api/products/search', [CartController::class, 'searchProducts'])->name('api.products.search');
+
    
     Route::get('/sales', [SalesController::class, 'index'])
         ->middleware(PermissionMiddleware::class . ':view_sales')
