@@ -66,7 +66,6 @@ class ProductService
     {
         
         $product = Products::find($productId);
-        // For the initial stock batch, use the current selling price as the baseline cost
         $initialCost = $product->product_price ?? 0;
 
         $batch = $this->fifoService->addStock($productId, (int)$quantity, $initialCost, auth()->id());
