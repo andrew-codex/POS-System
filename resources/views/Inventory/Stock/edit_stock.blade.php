@@ -34,6 +34,42 @@
                 <input type="number" name="quantity" value="{{ $stock->quantity }}" required>
             </div>
 
+            @if(isset($batches) && $batches->count() > 0)
+            <div class="form-group">
+                <label>Available Batches (FIFO)</label>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Batch #</th>
+                                <th>Received</th>
+                                <th>Initial Qty</th>
+                                <th>Remaining</th>
+                                <th>Unit Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($batches as $batch)
+                            <tr>
+                                <td>{{ $batch->batch_number }}</td>
+                                <td>{{ $batch->received_date->format('Y-m-d') }}</td>
+                                <td>{{ $batch->quantity_initial }}</td>
+                                <td>{{ $batch->quantity_remaining }}</td>
+                                <td>{{ number_format($batch->purchase_price, 2) }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <small class="text-muted">Decreasing quantity will consume stock from the oldest batches first (FIFO).</small>
+            </div>
+            @endif
+
+            <div class="form-group">
+                <label for="adjustment_reason">Adjustment Reason <span class="required">*</span></label>
+                <textarea name="adjustment_reason" id="adjustment_reason" class="form-control" rows="2" required>{{ old('adjustment_reason') }}</textarea>
+            </div>
+
             <div class="form-actions">
                 <button type="button" class="btn-primary" onclick="confirmEdit('edit-stock-form')">Update
                     Stock</button>
