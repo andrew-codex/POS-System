@@ -3,7 +3,7 @@ namespace App\Services\POS;
 
 use App\Models\StockBatch;
 use App\Models\Stocks;
-use App\Models\Stock_Logs;
+use App\Models\Stock_logs as StockLog;
 use App\Models\Products;
 use Illuminate\Support\Facades\DB;
 
@@ -30,7 +30,7 @@ class FifoInventoryService
             );
             $stock->increment('quantity', $quantity);
 
-            Stock_Logs::create([
+            StockLog::create([
                 'product_id' => $productId,
                 'batch_id' => $batch->id,
                 'type' => 'in',
@@ -81,7 +81,7 @@ class FifoInventoryService
 
                 $totalCost += $qtyFromBatch * $batch->purchase_price;
 
-                Stock_Logs::create([
+                StockLog::create([
                     'product_id' => $productId,
                     'batch_id' => $batch->id,
                     'type' => 'out',
@@ -185,7 +185,7 @@ class FifoInventoryService
                 $stock->increment('quantity', $quantity);
             }
 
-            Stock_Logs::create([
+            StockLog::create([
                 'product_id' => $productId,
                 'batch_id' => $batch->id,
                 'type' => 'in',

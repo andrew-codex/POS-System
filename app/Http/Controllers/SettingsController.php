@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\RolePermission;
 use App\Models\Setting;
-use App\Models\Stock_logs;
+use App\Models\Stock_logs as StockLog;
 use App\Traits\LogsActivity;
 class SettingsController extends Controller
 {
@@ -39,7 +39,7 @@ class SettingsController extends Controller
 
      
         $users = User::where('role', '!=', 'admin')->get();
-        $auditLogs = Stock_logs::orderBy('created_at', 'desc')->paginate(10);
+        $auditLogs = StockLog::orderBy('created_at', 'desc')->paginate(10);
 
       $settings = Setting::pluck('value', 'key')->toArray();
         return view('Settings.settings', [

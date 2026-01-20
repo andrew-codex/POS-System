@@ -59,9 +59,6 @@ class StockController extends Controller
         return view('Inventory.Stock.create_stock', compact('products', 'selectedProduct', 'productId'));
     }
 
-    /**
-     * Store new stock with FIFO batch tracking
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -71,7 +68,6 @@ class StockController extends Controller
         ]);
 
         try {
-            // Use FIFO service to add stock
             $batch = $this->fifoService->addStock(
                 $request->product_id,
                 $request->quantity,
@@ -92,8 +88,7 @@ class StockController extends Controller
     public function edit($id)
     {
         $stock = Stocks::with('product')->findOrFail($id);
-        
-        // Get all batches for this product
+     
         $batches = StockBatch::where('product_id', $stock->product_id)
             ->where('quantity_remaining', '>', 0)
             ->orderBy('received_date', 'asc')
@@ -102,15 +97,11 @@ class StockController extends Controller
         return view('Inventory.Stock.edit_stock', compact('stock', 'batches'));
     }
 
-    /**
-     * Update stock quantity (manual adjustment)
-     * This should be used carefully as it bypasses FIFO
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
             'quantity' => 'required|integer|min:0',
-            'adjustment_reason' => 'required|string|max:255',
+            'adjustment_reason' => 'nullable|string|max:255',
         ]);
 
         DB::transaction(function () use ($request, $id) {
@@ -123,14 +114,15 @@ class StockController extends Controller
                 return;
             }
 
-            // Update total stock
+          
             $stock->update(['quantity' => $newQty]);
 
-            // Handle adjustment based on increase or decrease
+          
             if ($difference > 0) {
-                // Stock increase - create adjustment batch
+
                 $product = Products::find($stock->product_id);
-                
+                $reason = $request->input('adjustment_reason', 'Stock adjustment (increase)');
+
                 StockBatch::create([
                     'product_id' => $stock->product_id,
                     'quantity_remaining' => abs($difference),
@@ -140,21 +132,21 @@ class StockController extends Controller
                     'received_date' => now()
                 ]);
 
-                Stock_Logs::create([
+                StockLog::create([
                     'product_id' => $stock->product_id,
                     'type' => 'in',
                     'quantity' => abs($difference),
-                    'remarks' => 'Stock adjustment (increase): ' . $request->adjustment_reason,
+                    'remarks' => $reason,
                     'user_id' => auth()->id()
                 ]);
             } else {
-                // Stock decrease - deduct from oldest batches using FIFO
                 try {
+                    $reasonDec = $request->input('adjustment_reason', 'Stock adjustment (decrease)');
                     $this->fifoService->deductStock(
                         $stock->product_id,
                         abs($difference),
                         auth()->id(),
-                        'Stock adjustment (decrease): ' . $request->adjustment_reason
+                        $reasonDec
                     );
                 } catch (\Exception $e) {
                     throw new \Exception('Cannot decrease stock: ' . $e->getMessage());
@@ -166,9 +158,7 @@ class StockController extends Controller
             ->with('success', 'Stock adjusted successfully.');
     }
 
-    /**
-     * View stock batches for a product
-     */
+ 
     public function batches($productId)
     {
         $product = Products::findOrFail($productId);
@@ -184,9 +174,7 @@ class StockController extends Controller
         return view('Inventory.Stock.batches', compact('product', 'batches', 'totalValue'));
     }
 
-    /**
-     * Get stock valuation report
-     */
+  
     public function valuation()
     {
         $stocksWithBatches = Products::with(['stockBatches' => function($q) {
@@ -224,9 +212,7 @@ class StockController extends Controller
         ));
     }
 
-    /**
-     * Get low stock alert based on FIFO batches
-     */
+  
     public function lowStock(Request $request)
     {
         $threshold = $request->get('threshold', 10);
@@ -240,14 +226,12 @@ class StockController extends Controller
         return view('Inventory.Stock.low_stock', compact('lowStockProducts', 'threshold'));
     }
 
-    /**
-     * View stock movement history with batch details
-     */
+  
     public function history($productId)
     {
         $product = Products::findOrFail($productId);
         
-        $logs = Stock_Logs::where('product_id', $productId)
+        $logs = StockLog::where('product_id', $productId)
             ->with('batch', 'user')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
@@ -276,5 +260,30 @@ class StockController extends Controller
                 'message' => $e->getMessage()
             ], 400);
         }
+    }
+
+  
+    public function allBatches(Request $request)
+    {
+        $search = $request->input('search');
+
+        $query = StockBatch::with('product');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('batch_number', 'like', '%' . $search . '%')
+                  ->orWhereHas('product', function ($q2) use ($search) {
+                      $q2->where('product_name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $batches = $query->orderBy('received_date', 'asc')->paginate(25);
+
+        $totalValue = $batches->getCollection()->sum(function ($batch) {
+            return $batch->quantity_remaining * $batch->purchase_price;
+        });
+
+        return view('Inventory.Stock.all_batches', compact('batches', 'totalValue'));
     }
 }

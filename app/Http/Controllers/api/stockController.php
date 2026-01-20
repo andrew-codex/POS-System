@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Stocks;
-use App\Models\Stock_logs;
+use App\Models\Stock_logs as StockLog;
 use App\Models\Products;
 
 class stockController extends Controller
@@ -33,7 +33,7 @@ public function update(Request $request, $productId)
     
     $difference = $newQuantity - $oldQuantity;
     if ($difference !== 0) {
-            Stock_logs::create([
+            StockLog::create([
             'product_id' => $stock->product_id,
             'type' => $difference > 0 ? 'in' : 'out',
             'quantity' => abs($difference),

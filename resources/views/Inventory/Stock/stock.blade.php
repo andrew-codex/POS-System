@@ -16,6 +16,9 @@
             <a class="btn-primary" href="{{ route('stock.create') }}">
                 <i class="bi bi-plus"></i>Add Stock
             </a>
+            <a class="btn btn-secondary ms-2" href="{{ route('inventory.batches') }}">
+                <i class="bi bi-box-seam"></i> View All Batches
+            </a>
         </div>
     </div>
 

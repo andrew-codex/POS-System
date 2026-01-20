@@ -18,6 +18,10 @@
         </div>
     </div>
 
+    <div class="alert alert-info">
+        <strong>Note:</strong> Adding stock creates a new stock batch. The system uses FIFO (first-in, first-out) when selling or deducting stock.
+    </div>
+
     <div class="form-container">
         <form id="create-stock-form" action="{{ route('stock.store') }}" method="POST">
             @csrf

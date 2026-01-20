@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Products;
+use App\Models\Stock_logs as StockLog;
 
 class StockBatch extends Model
 {
@@ -22,12 +24,12 @@ class StockBatch extends Model
 
     public function product()
     {
-        return $this->belongsTo(Products::class);
+        return $this->belongsTo(Products::class, 'product_id');
     }
 
     public function stockLogs()
     {
-        return $this->hasMany(Stock_Logs::class, 'batch_id');
+        return $this->hasMany(StockLog::class, 'batch_id');
     }
 
     

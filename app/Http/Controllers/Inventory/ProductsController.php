@@ -86,6 +86,9 @@ class ProductsController extends Controller
                 ->with('error', 'Product with the same barcode already exists.');
         }
 
+        
+        $validated['initial_stock'] = (int) $request->input('initial_stock', 0);
+
         try {
             $this->productService->createProduct($validated);
 

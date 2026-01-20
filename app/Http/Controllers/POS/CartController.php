@@ -6,9 +6,17 @@ use Illuminate\Http\Request;
 use App\Models\Products;
 use App\Models\Category;
 use App\Models\Stocks;
+use Illuminate\Support\Facades\DB;
+use App\Services\POS\FifoInventoryService;
 
 class CartController extends Controller
 {
+    protected FifoInventoryService $fifoService;
+
+    public function __construct(FifoInventoryService $fifoService)
+    {
+        $this->fifoService = $fifoService;
+    }
     public function index(Request $request)
     {
         $categories = Category::select('id', 'category_name')
@@ -61,5 +69,51 @@ class CartController extends Controller
             'products' => $products,
             'count' => $products->count()
         ]);
+    }
+
+
+ 
+    public function processSale(Request $request)
+    {
+        $data = $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|integer|exists:products,id',
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
+
+        $userId = auth()->id();
+
+        DB::beginTransaction();
+        try {
+            $results = [];
+            $totalCost = 0;
+
+            foreach ($data['items'] as $item) {
+                $productId = $item['product_id'];
+                $quantity = $item['quantity'];
+
+                $deduction = $this->fifoService->deductStock($productId, $quantity, $userId, 'Sale');
+
+                $results[] = [
+                    'product_id' => $productId,
+                    'quantity' => $quantity,
+                    'deduction' => $deduction,
+                ];
+
+                $totalCost += $deduction['total_cost'] ?? 0;
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'results' => $results,
+                'total_cost' => $totalCost,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
+        }
     }
 }

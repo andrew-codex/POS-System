@@ -3,6 +3,7 @@
 namespace App\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\StockBatch;
 
 class Stock_logs extends Model
 {
@@ -13,6 +14,11 @@ class Stock_logs extends Model
      public function user()
      {
      return $this->belongsTo(User::class, 'user_id');
+     }
+
+     public function batch()
+     {
+          return $this->belongsTo(StockBatch::class, 'batch_id');
      }
 }
 
