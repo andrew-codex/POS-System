@@ -16,7 +16,7 @@ use Illuminate\Database\Schema\Blueprint;
 
 pest()->extend(Tests\TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+     ->in('Feature', 'Unit');
 
 // Ensure a minimal `settings` table exists for all tests to avoid errors from view composers
 beforeEach(function () {

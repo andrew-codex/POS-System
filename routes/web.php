@@ -106,6 +106,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/inventory/stocks', [StockController::class, 'index'])
         ->middleware(PermissionMiddleware::class . ':view_stock')
         ->name('inventory.stock');
+    // All batches index
+    Route::get('/inventory/batches', [StockController::class, 'allBatches'])
+        ->middleware(PermissionMiddleware::class . ':view_stock')
+        ->name('inventory.batches');
     Route::get('/inventory/stocks/create', [StockController::class, 'create'])
         ->middleware(PermissionMiddleware::class . ':view_stock')
         ->name('stock.create');

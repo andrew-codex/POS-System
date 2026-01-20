@@ -18,6 +18,7 @@
         </div>
     </div>
 
+
     <div class="form-container">
         <form id="create-product-form" action="{{ route('products.store') }}" method="POST">
             @csrf
@@ -30,6 +31,9 @@
               <div class="form-group">
                 <label for="initial_stock">Initial Stock <span class="required">*</span></label>
                 <input type="number" name="initial_stock" required>
+                <small class="form-text text-muted mt-1">
+                    This will create an initial stock batch for the product. The system uses FIFO (first-in, first-out) when selling — older batches are consumed before newer ones.
+                </small>
             </div>
 
             <div class="form-group">

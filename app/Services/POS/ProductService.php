@@ -4,12 +4,19 @@ namespace App\Services\POS;
 use App\Models\Products;
 use App\Models\Stocks;
 use App\Models\ActivityLog;
-use App\Models\Stock_logs;
+use App\Models\Stock_logs as StockLog;
+use App\Services\POS\FifoInventoryService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
 class ProductService
 {
+    protected FifoInventoryService $fifoService;
+
+    public function __construct(FifoInventoryService $fifoService)
+    {
+        $this->fifoService = $fifoService;
+    }
     /**
      * Create a new product with optional initial stock
      * 
@@ -57,24 +64,26 @@ class ProductService
      */
     private function createInitialStock(int $productId, int $quantity): Stocks
     {
-        $stock = Stocks::create([
-            'product_id' => $productId,
-            'quantity' => (int)$quantity,
-        ]);
+        
+        $product = Products::find($productId);
+        // For the initial stock batch, use the current selling price as the baseline cost
+        $initialCost = $product->product_price ?? 0;
+
+        $batch = $this->fifoService->addStock($productId, (int)$quantity, $initialCost, auth()->id());
 
         $this->logActivity("Initial Stock Set", [
             "product_id" => $productId,
             "quantity" => (int)$quantity,
+            "batch_id" => $batch->id ?? null,
         ]);
 
-        $this->logStockAddition($productId, (int)$quantity, 'Initial stock set during product creation.');
-
-        return $stock;
+    
+        return Stocks::firstOrCreate(['product_id' => $productId], ['quantity' => 0]);
     }
 
-    private function logStockAddition(int $productId, int $quantity, ?string $remarks = null): Stock_logs
+    private function logStockAddition(int $productId, int $quantity, ?string $remarks = null): StockLog
     {
-        $log = Stock_logs::create([
+        $log = StockLog::create([
             'product_id' => $productId,
             'type' => 'in',
             'quantity' => $quantity,

@@ -10,7 +10,7 @@ class SaleItem extends Model
 {
      protected $table = 'sale_items';
     protected $fillable = [
-        'sale_id', 'product_id', 'quantity', 'price', 'subtotal'
+        'sale_id', 'product_id', 'quantity', 'price', 'subtotal', 'cost_price', 'profit'
     ];
 
     public function sale()
